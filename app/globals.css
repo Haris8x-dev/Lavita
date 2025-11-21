@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "chetta";
+  src: url('/Fonts/chetta.otf');
+}
+
+.logo{
+  font-family: "chetta";
+  letter-spacing: 5px;
+}
+
+body {
+  background-color: black;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.scrollable-content {
+  overflow: auto; /* Ensure the element is scrollable */
+  scroll-behavior: smooth;
+}
