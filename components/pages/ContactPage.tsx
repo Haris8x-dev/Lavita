@@ -411,8 +411,6 @@ const ContactPage: React.FC = () => {
             </div>
           </motion.div>
         </div>
-
-        {/* Map Section */}
       </div>
     </div>
   );
