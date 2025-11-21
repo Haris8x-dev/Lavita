@@ -13,6 +13,54 @@ const box3Img = '/images/box3.jpg'
 const hotelVideo = '/videos/hotel-video.mp4'
 const hotelFallback = '/images/hotel-fallback.jpg'
 
+// CountUp Component
+const CountUp = ({ end, duration = 2, suffix = "" }: { end: number; duration?: number; suffix?: string }) => {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
+  const [isInView, setIsInView] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isInView) {
+      let start = 0;
+      const increment = end / (duration * 60); // 60 frames per second
+      const timer = setInterval(() => {
+        start += increment;
+        if (start >= end) {
+          setCount(end);
+          clearInterval(timer);
+        } else {
+          setCount(Math.ceil(start));
+        }
+      }, 1000 / 60);
+
+      return () => clearInterval(timer);
+    }
+  }, [isInView, end, duration]);
+
+  return <span ref={ref}>{count}{suffix}</span>;
+};
+
 // Carousel state management with React 19 useActionState
 function carouselReducer(state: { activeIndex: number; direction: number }, action: 'next' | 'prev' | number) {
   const totalSlides = 3;
@@ -39,6 +87,7 @@ const Home = () => {
   const containerRef = useRef<HTMLDivElement>(null)
   const section2Ref = useRef<HTMLDivElement>(null)
   const timelineRef = useRef<HTMLDivElement>(null)
+  const statsRef = useRef<HTMLDivElement>(null)
   
   // Mount state to prevent hydration errors
   const [isMounted, setIsMounted] = useState(false)
@@ -57,7 +106,7 @@ const Home = () => {
     setIsMounted(true)
   }, [])
 
-  // Safe useScroll hooks with mounted checks - REMOVED layoutEffect property
+  // Safe useScroll hooks with mounted checks
   const { scrollYProgress } = useScroll({
     target: isMounted ? containerRef : undefined,
     offset: ["start start", "end end"]
@@ -66,15 +115,13 @@ const Home = () => {
   // Animation for section2 to overlay section1
   const section2Y = useTransform(scrollYProgress, [0, 0.2], [100, 0])
   
-  // ===== FIXED: Timeline scroll progress with better offset for visibility =====
-  // Use the same target ref but only after mount to avoid SSR/hydration issues
-  // Use offsets that map the visible middle of the timeline to 0..1 progress
+  // Timeline scroll progress
   const { scrollYProgress: timelineScrollProgress } = useScroll({
     target: isMounted ? timelineRef : undefined,
-    offset: ["start center", "end center"] // tightened offsets for consistent behaviour
+    offset: ["start center", "end center"]
   })
 
-  // Track when timeline is in view for navigation dots (same offsets)
+  // Track when timeline is in view for navigation dots
   const { scrollYProgress: timelineViewProgress } = useScroll({
     target: isMounted ? timelineRef : undefined,
     offset: ["start center", "end center"]
@@ -83,7 +130,6 @@ const Home = () => {
   // Safe event listeners
   useMotionValueEvent(timelineViewProgress, "change", (latest) => {
     if (isMounted) {
-      // consider it "in view" when progress is between a comfortable band
       setIsTimelineInView(latest > 0.05 && latest < 0.98)
     }
   })
@@ -92,16 +138,8 @@ const Home = () => {
     if (!isMounted) return;
 
     const total = timelinePoints.length;
-
-    // Clamp progress to [0,1]
     const adjusted = Math.min(Math.max(latest, 0), 1);
-
-    // Calculate index such that:
-    // progress 0 -> index 0
-    // progress 1 -> index total-1 (last point)
-    // Distribute evenly between points
     const pointIndex = Math.floor(adjusted * (total - 1) + 0.0001);
-
     setCurrentPoint(pointIndex);
   })
 
@@ -159,6 +197,13 @@ const Home = () => {
       image: box1Img,
       position: "right" as const
     }
+  ]
+
+  const stats = [
+    { value: 50, suffix: "+", label: "Luxury Rooms" },
+    { value: 24, suffix: "/7", label: "Premium Service" },
+    { value: 5, suffix: "★", label: "Rated Resort" },
+    { value: 100, suffix: "%", label: "Satisfaction" }
   ]
 
   // Navigation functions
@@ -222,8 +267,6 @@ const Home = () => {
   };
 
   const { leftIndex, centerIndex, rightIndex } = getCardIndices();
-
-  const titleWords = "Lavita Malam Jabba".split(" ")
 
   // Card component
   const ExperienceCard = ({ 
@@ -294,40 +337,40 @@ const Home = () => {
   );
 
   // Loading state during hydration
-  if (!isMounted) {
-    return (
-      <div className="relative">
-        <section className="fixed top-0 left-0 w-full h-screen -z-10">
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="absolute top-0 left-0 w-full h-full object-cover z-10"
-            preload="metadata"
-          >
-            <source src={hotelVideo} type="video/mp4" />
-          </video>
-          <div className="absolute inset-0 bg-black/30 flex items-center z-30">
-            <div className="ml-8 lg:ml-16 xl:ml-24 max-w-2xl">
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6">
-                Lavita Malam Jabba
-              </h1>
-              <p className="text-lg md:text-xl lg:text-2xl text-white/90">
-                Discover the ultimate Mountain Escape at Lavita Malam Jabba
-              </p>
-            </div>
-          </div>
-        </section>
-        <div className="h-screen" />
-        <section className="min-h-screen bg-black" />
-      </div>
-    )
-  }
+  // if (!isMounted) {
+  //   return (
+  //     <div className="relative">
+  //       <section className="fixed top-0 left-0 w-full h-screen -z-10">
+  //         <video
+  //           autoPlay
+  //           loop
+  //           muted
+  //           playsInline
+  //           className="absolute top-0 left-0 w-full h-full object-cover z-10"
+  //           preload="metadata"
+  //         >
+  //           <source src={hotelVideo} type="video/mp4" />
+  //         </video>
+  //         <div className="absolute inset-0 bg-black/30 flex items-center z-30">
+  //           <div className="ml-8 lg:ml-16 xl:ml-24 max-w-2xl">
+  //             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 logo">
+  //               Lavita Malam Jabba
+  //             </h1>
+  //             <p className="text-lg md:text-xl lg:text-2xl text-white/90">
+  //               Discover the ultimate Mountain Escape at Lavita Malam Jabba
+  //             </p>
+  //           </div>
+  //         </div>
+  //       </section>
+  //       <div className="h-screen" />
+  //       <section className="min-h-screen bg-black" />
+  //     </div>
+  //   )
+  // }
 
   return (
     <div ref={containerRef} className="relative">
-      {/* SECTION 1: HERO WITH VIDEO BACKGROUND */}
+      {/* SECTION 1: PROFESSIONAL HERO WITH VIDEO BACKGROUND */}
       <section className="fixed top-0 left-0 w-full h-screen -z-10">
         <video
           autoPlay
@@ -344,54 +387,104 @@ const Home = () => {
           />
         </video>
 
-        <div className="absolute inset-0 bg-black/30 flex items-center z-30">
+        {/* Professional Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-black/20 to-transparent z-20" />
+        
+        <div className="absolute inset-0 flex items-center z-30">
           <div className="ml-8 lg:ml-16 xl:ml-24 max-w-2xl">
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, ease: "easeOut" }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
             >
-              <motion.h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 overflow-hidden logo">
-                {titleWords.map((word, index) => (
-                  <motion.span
-                    key={index}
-                    initial={{ opacity: 0, x: -50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.8, delay: index * 0.1, ease: "easeOut" }}
-                    className="inline-block mr-2 last:mr-0 text-green-400"
-                  >
-                    {word}
-                  </motion.span>
-                ))}
-              </motion.h1>
-
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
-                className="text-lg md:text-xl lg:text-2xl text-white/90 mb-6"
-              >
-                Discover the ultimate Mountain Escape at Lavita Malam Jabba
-              </motion.p>
-
+              {/* Professional Title Animation */}
               <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: "100%" }}
-                transition={{ duration: 1, delay: 1.2, ease: "easeOut" }}
-                className="h-0.5 bg-white mb-6 max-w-md"
-              />
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.3 }}
+                className="mb-6"
+              >
+                <h1 className="text-5xl md:text-7xl lg:text-6xl font-bold text-white mb-4 leading-tight">
+                  <span className="bg-gradient-to-r from-white via-emerald-100 to-emerald-400 bg-clip-text text-transparent logo">
+                    Lavita Malam Jabba
+                  </span>
+                  <br />
+                  {/* <span className="bg-gradient-to-r from-emerald-400 to-green-300 bg-clip-text text-transparent logo">
+                    Malam Jabba
+                  </span> */}
+                </h1>
+              </motion.div>
 
-              <motion.p
+              {/* Professional Subtitle */}
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 1.6, ease: "easeOut" }}
-                className="text-base md:text-lg lg:text-xl text-white font-light leading-relaxed max-w-3xl"
+                transition={{ duration: 0.8, delay: 0.6 }}
+                className="mb-8"
               >
-                Lavita Malam Jabba presents the region&apos;s only fully serviced luxury hotel apartments, perfectly positioned on Malam Jabba Road, Swat.
-              </motion.p>
+                <p className="text-xl md:text-2xl lg:text-3xl text-white/90 font-light mb-4">
+                  Discover the Ultimate Mountain Escape
+                </p>
+                
+                {/* Elegant Divider */}
+                <motion.div
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ duration: 1, delay: 0.9, ease: "easeOut" }}
+                  className="h-px bg-gradient-to-r from-emerald-400 to-transparent w-64"
+                />
+              </motion.div>
+
+              {/* Professional Description */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 1.1 }}
+                className="mb-8"
+              >
+                <p className="text-lg md:text-xl text-white/80 font-light leading-relaxed max-w-2xl">
+                  The region&apos;s premier fully serviced luxury hotel apartments, 
+                  perfectly positioned on Malam Jabba Road amidst the breathtaking Swat Valley.
+                </p>
+              </motion.div>
+
+              {/* CTA Button */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 1.4 }}
+              >
+                <motion.button
+                  className="px-12 py-4 bg-gradient-to-r from-emerald-500 to-green-500 text-white font-semibold text-lg rounded-xl hover:shadow-2xl hover:shadow-emerald-500/40 transition-all duration-500 border border-emerald-400/40"
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Explore Luxury
+                </motion.button>
+              </motion.div>
             </motion.div>
           </div>
         </div>
+
+        {/* Scroll Indicator */}
+        {/* <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 2 }}
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-30"
+        >
+          <motion.div
+            animate={{ y: [0, 10, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center"
+          >
+            <motion.div
+              animate={{ y: [0, 12, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="w-1 h-3 bg-white/70 rounded-full mt-2"
+            />
+          </motion.div>
+        </motion.div> */}
       </section>
 
       {/* SPACER */}
@@ -489,7 +582,7 @@ const Home = () => {
                 <motion.button
                   key={index}
                   onClick={() => goToSlide(index)}
-                  className={`relative rounded-full transition-all duration-300 $${index === carouselState.activeIndex ? 'bg-emerald-400 shadow-lg shadow-emerald-500/50' : 'bg-slate-600 hover:bg-slate-500'}`}
+                  className={`relative rounded-full transition-all duration-300 ${index === carouselState.activeIndex ? 'bg-emerald-400 shadow-lg shadow-emerald-500/50' : 'bg-slate-600 hover:bg-slate-500'}`}
                   whileHover={{ scale: 1.3 }}
                   whileTap={{ scale: 0.9 }}
                   animate={{
@@ -503,7 +596,7 @@ const Home = () => {
             </div>      
           </div>
 
-          {/* TIMELINE SECTION - FIXED GREEN LINE AND SPACING */}
+          {/* TIMELINE SECTION */}
           <div ref={timelineRef} className="min-h-screen pt-32">
             <div className="text-center mb-20" id="services">
                 <motion.div
@@ -531,8 +624,6 @@ const Home = () => {
                   viewport={{ once: true }}
                   className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6"
                 >
-                  <br />
-                  
                   <span className="bg-gradient-to-r from-green-300 to-emerald-400 bg-clip-text text-transparent">
                     Extra Ordinary Services
                   </span>
@@ -541,11 +632,8 @@ const Home = () => {
             </div>
 
             <div className="relative">
-              {/* FIXED: Timeline line that properly reaches the last point on all screens */}
               <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-emerald-500/30 transform -translate-x-1/2 z-0">
                 <motion.div
-                  // timelineScrollProgress is a MotionValue (0..1).
-                  // Using scaleY with origin top ensures the bar grows downward.
                   style={{ scaleY: timelineScrollProgress }}
                   className="h-full w-full bg-gradient-to-b from-emerald-400 to-green-500 origin-top shadow-[0_0_20px_5px_rgba(52,211,153,0.4)]"
                 />
@@ -555,10 +643,8 @@ const Home = () => {
                 <div
                   key={point.id}
                   id={`point-${index}`}
-                  // FIXED: Reduced spacing on mobile (mb-24), normal on desktop (lg:mb-40)
                   className={`relative flex flex-col lg:flex-row items-center justify-between mb-24 lg:mb-40 ${index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'}`}
                 >
-                  {/* Content Card - Increased width on mobile */}
                   <motion.div
                     initial={{ opacity: 0, x: index % 2 === 0 ? -100 : 100 }}
                     whileInView={{ opacity: 1, x: 0 }}
@@ -579,10 +665,7 @@ const Home = () => {
                     </div>
                   </motion.div>
 
-                  {/* Central Dot with Connecting Line */}
-                  {/* FIXED: Reduced spacing on mobile (mb-6), normal on desktop (lg:mb-0) */}
                   <div className="relative z-10 flex-shrink-0 order-1 lg:order-2 mb-6 lg:mb-0">
-                    {/* Connecting Line to Central Timeline */}
                     <div className={`absolute top-1/2 w-8 lg:w-32 h-1 bg-emerald-400/50 ${index % 2 === 0 ? 'right-full' : 'left-full'} transform -translate-y-1/2 z-0 hidden lg:block`} />
                     
                     <motion.div
@@ -594,7 +677,6 @@ const Home = () => {
                     />
                   </div>
 
-                  {/* Image - Hidden on mobile, visible on lg screens */}
                   <motion.div
                     initial={{ opacity: 0, x: index % 2 === 0 ? 100 : -100 }}
                     whileInView={{ opacity: 1, x: 0 }}
@@ -634,7 +716,7 @@ const Home = () => {
             </motion.div>
           </div>
 
-          {/* ABOUT SECTION */}
+          {/* ABOUT SECTION WITH ANIMATED STATS */}
           <div className="min-h-screen pt-32 flex items-center">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center" id="about">
               <motion.div
@@ -696,23 +778,29 @@ const Home = () => {
                   we provide a sanctuary for those seeking both adventure and relaxation in one of Pakistan&apos;s most breathtaking locations.
                 </motion.p>
 
+                {/* ANIMATED STATS */}
                 <motion.div
+                  ref={statsRef}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
                   viewport={{ once: true }}
                   className="grid grid-cols-2 gap-8 mt-12"
                 >
-                  {[
-                    { value: "50+", label: "Luxury Rooms" },
-                    { value: "24/7", label: "Premium Service" },
-                    { value: "5★", label: "Rated Resort" },
-                    { value: "100%", label: "Satisfaction" }
-                  ].map((item, index) => (
-                    <div key={index} className="text-center">
-                      <div className="text-3xl font-bold text-emerald-400 mb-2">{item.value}</div>
-                      <div className="text-slate-400">{item.label}</div>
-                    </div>
+                  {stats.map((stat, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.6, delay: 0.7 + index * 0.1 }}
+                      viewport={{ once: true }}
+                      className="text-center"
+                    >
+                      <div className="text-3xl font-bold text-emerald-400 mb-2">
+                        <CountUp end={stat.value} suffix={stat.suffix} />
+                      </div>
+                      <div className="text-slate-400 text-sm">{stat.label}</div>
+                    </motion.div>
                   ))}
                 </motion.div>
 

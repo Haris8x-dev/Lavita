@@ -278,23 +278,6 @@ const FacilityBlock: React.FC<FacilityBlockProps> = ({ facility, index }) => {
             height={400}
             className="absolute inset-0 w-full h-full object-cover"
           />
-
-          {/* Video Element */}
-          <video
-            className="w-full h-full object-cover"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            poster={facility.imageUrl}
-          >
-            <source src={facility.videoUrl} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-
-          {/* Video overlay for better text contrast */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
         </div>
       </motion.div>
     </motion.div>
