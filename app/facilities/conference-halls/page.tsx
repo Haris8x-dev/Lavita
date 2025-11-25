@@ -1,9 +1,11 @@
-import React from 'react'
+import ConferenceHalls from "@/components/pages/facilities-subpages/conferenceHalls";
 
-const ConferenceHalls = () => {
+const ConferenceHallsPage = () => {
   return (
-    <div>page</div>
+    <div>
+      <ConferenceHalls/>
+    </div>
   )
 }
 
-export default ConferenceHalls;
+export default ConferenceHallsPage;

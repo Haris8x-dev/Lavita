@@ -1,9 +1,11 @@
-import React from 'react'
+import KidsActivityZone from "@/components/pages/facilities-subpages/kidsActivityZone";
 
-const kidsActivityZone = () => {
+const KidsActivityZonePage = () => {
   return (
-    <div>kidsActivityZone</div>
+    <div>
+      <KidsActivityZone/>
+    </div>
   )
 }
 
-export default kidsActivityZone;
+export default KidsActivityZonePage;

@@ -1,8 +1,9 @@
 'use client'
 
 import { motion, useScroll, useTransform, AnimatePresence, useMotionValueEvent } from "framer-motion"
-import { useRef, useState, useEffect, useActionState } from "react"
+import { useRef, useState, useEffect, useActionState, useMemo } from "react"
 import Image from "next/image"
+import Link from 'next/link';
 
 // Images from public folder
 const box1Img = '/images/box1.jpg'
@@ -11,7 +12,7 @@ const box3Img = '/images/box3.jpg'
 
 // Video from public folder
 const hotelVideo = '/videos/hotel-video.mp4'
-const hotelFallback = '/images/hotel-fallback.jpg'
+const hotelFallback = '/images/box3.jpg'
 
 // CountUp Component
 const CountUp = ({ end, duration = 2, suffix = "" }: { end: number; duration?: number; suffix?: string }) => {
@@ -43,7 +44,7 @@ const CountUp = ({ end, duration = 2, suffix = "" }: { end: number; duration?: n
   useEffect(() => {
     if (isInView) {
       let start = 0;
-      const increment = end / (duration * 60); // 60 frames per second
+      const increment = end / (duration * 60);
       const timer = setInterval(() => {
         start += increment;
         if (start >= end) {
@@ -61,7 +62,7 @@ const CountUp = ({ end, duration = 2, suffix = "" }: { end: number; duration?: n
   return <span ref={ref}>{count}{suffix}</span>;
 };
 
-// Carousel state management with React 19 useActionState
+// Carousel state management
 function carouselReducer(state: { activeIndex: number; direction: number }, action: 'next' | 'prev' | number) {
   const totalSlides = 3;
   
@@ -86,62 +87,25 @@ function carouselReducer(state: { activeIndex: number; direction: number }, acti
 const Home = () => {
   const containerRef = useRef<HTMLDivElement>(null)
   const section2Ref = useRef<HTMLDivElement>(null)
-  const timelineRef = useRef<HTMLDivElement>(null)
   const statsRef = useRef<HTMLDivElement>(null)
   
-  // Mount state to prevent hydration errors
   const [isMounted, setIsMounted] = useState(false)
-  
-  // React 19 useActionState for carousel
   const [carouselState, carouselAction] = useActionState(carouselReducer, {
     activeIndex: 0,
     direction: 0
   });
-  
-  const [currentPoint, setCurrentPoint] = useState(0)
-  const [isTimelineInView, setIsTimelineInView] = useState(false)
+  const [showAllServices, setShowAllServices] = useState(false);
 
-  // Set mounted state on client side
   useEffect(() => {
     setIsMounted(true)
   }, [])
 
-  // Safe useScroll hooks with mounted checks
   const { scrollYProgress } = useScroll({
     target: isMounted ? containerRef : undefined,
     offset: ["start start", "end end"]
   })
 
-  // Animation for section2 to overlay section1
   const section2Y = useTransform(scrollYProgress, [0, 0.2], [100, 0])
-  
-  // Timeline scroll progress
-  const { scrollYProgress: timelineScrollProgress } = useScroll({
-    target: isMounted ? timelineRef : undefined,
-    offset: ["start center", "end center"]
-  })
-
-  // Track when timeline is in view for navigation dots
-  const { scrollYProgress: timelineViewProgress } = useScroll({
-    target: isMounted ? timelineRef : undefined,
-    offset: ["start center", "end center"]
-  })
-
-  // Safe event listeners
-  useMotionValueEvent(timelineViewProgress, "change", (latest) => {
-    if (isMounted) {
-      setIsTimelineInView(latest > 0.05 && latest < 0.98)
-    }
-  })
-
-  useMotionValueEvent(timelineScrollProgress, "change", (latest) => {
-    if (!isMounted) return;
-
-    const total = timelinePoints.length;
-    const adjusted = Math.min(Math.max(latest, 0), 1);
-    const pointIndex = Math.floor(adjusted * (total - 1) + 0.0001);
-    setCurrentPoint(pointIndex);
-  })
 
   // Data
   const experiences = [
@@ -150,54 +114,79 @@ const Home = () => {
       title: "Peak Experiences",
       description: "Unforgettable mountain adventures and exclusive activities designed for the discerning traveler",
       image: box1Img,
-      icon: "🏔️"
     },
     {
       id: 2,
       title: "Premium Amenities",
       description: "World-class facilities and services that redefine luxury mountain living",
       image: box2Img,
-      icon: "⭐"
     },
     {
       id: 3,
       title: "Premium Hospitality",
       description: "Personalized service and attention to detail that exceeds every expectation",
       image: box3Img,
-      icon: "👑"
     }
   ]
 
-  const timelinePoints = [
-    {
-      id: 1,
-      title: "Mountain Luxury",
-      description: "Experience unparalleled comfort in our premium suites with panoramic mountain views",
-      image: box1Img,
-      position: "left" as const
-    },
-    {
-      id: 2,
-      title: "Adventure Awaits",
-      description: "Guided expeditions and outdoor activities for every skill level",
-      image: box2Img,
-      position: "right" as const
-    },
-    {
-      id: 3,
-      title: "Culinary Excellence",
-      description: "Gourmet dining with locally sourced ingredients and international flavors",
-      image: box3Img,
-      position: "left" as const
-    },
-    {
-      id: 4,
-      title: "Wellness & Spa",
-      description: "Rejuvenate your senses with our world-class spa treatments and facilities",
-      image: box1Img,
-      position: "right" as const
-    }
-  ]
+ const extraordinaryServices = [
+  {
+    id: 1,
+    title: "Personal Adventure Concierge",
+    description: "Your dedicated adventure planner who curates personalized outdoor experiences. From arranging private skiing lessons to organizing exclusive wildlife tours, we handle every detail so you can focus on creating memories.",
+    image: box1Img,
+    highlight: "Tailored Experiences"
+  },
+  {
+    id: 2,
+    title: "Family Activity Coordination",
+    description: "Seamless family fun with coordinated schedules for all ages. While kids enjoy supervised playground activities, adults can relax knowing every family member is engaged in age-appropriate, exciting experiences.",
+    image: box2Img,
+    highlight: "Multi-Generational Fun"
+  },
+  {
+    id: 3,
+    title: "Corporate Retreat Planning",
+    description: "End-to-end corporate event management in our premium conference facilities. We transform business meetings into inspiring experiences with team-building activities, gourmet catering, and professional AV support.",
+    image: box3Img,
+    highlight: "Productive Luxury"
+  },
+  {
+    id: 4,
+    title: "Wellness Journey Guidance",
+    description: "Holistic wellness programs combining gym sessions, yoga classes, and spa treatments. Our wellness coaches create personalized fitness journeys that align with your health goals and schedule.",
+    image: box1Img,
+    highlight: "Mind-Body Balance"
+  },
+  {
+    id: 5,
+    title: "Celebration Experience Curator",
+    description: "Turn special moments into unforgettable memories with our event specialists. From intimate poolside dinners to grand wedding celebrations, we orchestrate every detail for flawless execution.",
+    image: box2Img,
+    highlight: "Memorable Events"
+  },
+  {
+    id: 6,
+    title: "Adventure Safety & Logistics",
+    description: "Professional guidance and equipment management for all outdoor activities. Our certified experts ensure your mountain climbing, hiking, and adventure sports are both thrilling and completely safe.",
+    image: box3Img,
+    highlight: "Safe Exploration"
+  },
+  {
+    id: 7,
+    title: "Nature Education Programs",
+    description: "Interactive learning experiences with our wildlife experts. Transform simple observation into deep understanding through guided sessions about local flora, fauna, and conservation efforts.",
+    image: box1Img,
+    highlight: "Educational Discovery"
+  },
+  {
+    id: 8,
+    title: "All-Weather Activity Coordination",
+    description: "Seamless transition between indoor and outdoor fun regardless of weather conditions. We ensure your itinerary remains exciting with our diverse range of facilities and activities.",
+    image: box2Img,
+    highlight: "Weather-Proof Fun"
+  }
+];
 
   const stats = [
     { value: 50, suffix: "+", label: "Luxury Rooms" },
@@ -210,13 +199,6 @@ const Home = () => {
   const nextSlide = () => carouselAction('next')
   const prevSlide = () => carouselAction('prev')
   const goToSlide = (index: number) => carouselAction(index)
-
-  const navigateToPoint = (index: number) => {
-    if (!isMounted) return;
-    setCurrentPoint(index)
-    const pointElement = document.getElementById(`point-${index}`)
-    pointElement?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' })
-  }
 
   // Animation configs
   const carouselTransition = {
@@ -268,6 +250,148 @@ const Home = () => {
 
   const { leftIndex, centerIndex, rightIndex } = getCardIndices();
 
+  // Get services to display - FIXED: Only use one array, not multiple render sections
+  const displayedServices = useMemo(() => (
+    showAllServices ? extraordinaryServices : extraordinaryServices.slice(0, 3)
+  ), [showAllServices, extraordinaryServices]);
+
+  // Service Card Component
+  const ServiceCard = ({ 
+    service, 
+    index,
+    isAdditional = false,
+    totalCount = 0
+  }: { 
+    service: typeof extraordinaryServices[0]; 
+    index: number;
+    isAdditional?: boolean;
+    totalCount?: number;
+  }) => {
+    const isEven = index % 2 === 0;
+    
+    return (
+      <motion.div
+        key={`${service.id}-${index}`}
+        initial={{ opacity: 0, y: isAdditional ? 50 : 80 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ 
+          duration: 0.8, 
+          delay: isAdditional ? index * 0.1 : index * 0.2, 
+          ease: "easeOut" 
+        }}
+        viewport={{ once: true, margin: "-100px" }}
+        className={`relative group ${isEven ? 'lg:pr-12' : 'lg:pl-12'}`}
+      >
+        {/* Background Glow Effect */}
+        <div className="absolute inset-0 bg-linear-to-r from-emerald-500/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+        
+        <div className={`relative flex flex-col lg:flex-row items-center gap-12 ${
+          isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'
+        }`}>
+          {/* Image Section */}
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="relative lg:w-1/2"
+          >
+            <div className="relative rounded-2xl overflow-hidden border border-emerald-400/20 bg-linear-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm">
+              <Image
+                src={service.image}
+                alt={service.title}
+                loading="lazy"
+                width={600}
+                height={400}
+                className="w-full h-80 lg:h-96 object-cover"
+              />
+              {/* Thin Border Overlay */}
+              <div className="absolute inset-0 border border-white/10 rounded-2xl pointer-events-none" />
+              {/* Gradient Overlay */}
+              <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent" />
+              
+              {/* Highlight Badge */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+                className="absolute top-6 left-6"
+              >
+                <div className="bg-black/60 backdrop-blur-md px-4 py-2 rounded-full border border-emerald-400/30">
+                  <span className="text-emerald-300 text-sm font-medium">{service.highlight}</span>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+
+          {/* Content Section */}
+          <motion.div
+            initial={{ opacity: 0, x: isEven ? 50 : -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7, delay: 0.3 }}
+            viewport={{ once: true }}
+            className="lg:w-1/2 space-y-6"
+          >
+            {/* Service Number */}
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-12 h-12 bg-linear-to-br from-emerald-500 to-green-500 rounded-full flex items-center justify-center border border-emerald-400/40">
+                <span className="text-white font-bold text-lg">{index + 1}</span>
+              </div>
+              <div className="h-px flex-1 bg-linear-to-r from-emerald-400/40 to-transparent" />
+            </div>
+
+            {/* Title */}
+            <h3 className="text-3xl lg:text-4xl font-bold text-white leading-tight">
+              {service.title}
+            </h3>
+
+            {/* Description */}
+            <p className="text-lg text-slate-300 leading-relaxed">
+              {service.description}
+            </p>
+
+            {/* Features */}
+            <div className="flex flex-wrap gap-3 pt-4">
+              {service.highlight && (
+                <span className="px-4 py-2 bg-emerald-500/10 border border-emerald-400/20 rounded-full text-emerald-300 text-sm">
+                  {service.highlight}
+                </span>
+              )}
+              <span className="px-4 py-2 bg-slate-700/50 border border-slate-600/30 rounded-full text-slate-300 text-sm">
+                Luxury Experience
+              </span>
+              <span className="px-4 py-2 bg-slate-700/50 border border-slate-600/30 rounded-full text-slate-300 text-sm">
+                Personalized
+              </span>
+            </div>
+
+            {/* CTA Button
+            <motion.button
+              className="mt-8 px-8 py-4 bg-linear-to-r from-emerald-500 to-green-500 text-white font-semibold rounded-xl hover:shadow-2xl hover:shadow-emerald-500/30 transition-all duration-500 border border-emerald-400/30 group/btn"
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <span className="flex items-center gap-3">
+                Experience Now
+                <svg 
+                  className="w-4 h-4 transform group-hover/btn:translate-x-1 transition-transform duration-300" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </span>
+            </motion.button> */}
+          </motion.div>
+        </div>
+
+        {/* Connecting Line (except for last item) */}
+        {index < (totalCount - 1) && (
+          <div className="absolute left-1/2 bottom-0 transform -translate-x-1/2 translate-y-20 w-px h-20 bg-linear-to-b from-emerald-400/30 to-transparent" />
+        )}
+      </motion.div>
+    );
+  };
+
   // Card component
   const ExperienceCard = ({ 
     experience, 
@@ -287,7 +411,7 @@ const Home = () => {
       }}
     >
       <motion.div
-        className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-800/95 to-slate-900/98 backdrop-blur-md border-2 border-emerald-400/50 shadow-2xl shadow-emerald-500/30"
+        className="relative overflow-hidden rounded-3xl bg-linear-to-br from-slate-800/95 to-slate-900/98 backdrop-blur-md border-2 border-emerald-400/50 shadow-2xl shadow-emerald-500/30"
         whileHover={{
           scale: position === 'center' ? 1.02 : 1,
           transition: { duration: 0.3, ease: "easeOut" }
@@ -303,10 +427,7 @@ const Home = () => {
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 60vw"
             priority={position === 'center'}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-          <div className="absolute top-6 right-6 w-16 h-16 bg-emerald-400/30 backdrop-blur-lg rounded-2xl border-2 border-emerald-400/50 shadow-lg shadow-emerald-500/25 flex items-center justify-center">
-            <span className="text-3xl">{experience.icon}</span>
-          </div>
+          <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/30 to-transparent" />
           <div className="absolute bottom-6 left-6 right-6">
             <h3 className="text-3xl lg:text-4xl font-bold text-white mb-2">
               {experience.title}
@@ -324,7 +445,7 @@ const Home = () => {
             {experience.description}
           </p>
           <motion.button
-            className="px-8 py-4 bg-gradient-to-r from-emerald-500 to-green-500 text-white font-semibold rounded-xl hover:shadow-2xl hover:shadow-emerald-500/30 transition-all duration-300 border border-emerald-400/30"
+            className="px-8 py-4 bg-linear-to-r from-emerald-500 to-green-500 text-white font-semibold rounded-xl hover:shadow-2xl hover:shadow-emerald-500/30 transition-all duration-300 border border-emerald-400/30"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
             transition={{ scale: { duration: 0.2, ease: "easeOut" } }}
@@ -335,38 +456,6 @@ const Home = () => {
       </motion.div>
     </motion.div>
   );
-
-  // Loading state during hydration
-  // if (!isMounted) {
-  //   return (
-  //     <div className="relative">
-  //       <section className="fixed top-0 left-0 w-full h-screen -z-10">
-  //         <video
-  //           autoPlay
-  //           loop
-  //           muted
-  //           playsInline
-  //           className="absolute top-0 left-0 w-full h-full object-cover z-10"
-  //           preload="metadata"
-  //         >
-  //           <source src={hotelVideo} type="video/mp4" />
-  //         </video>
-  //         <div className="absolute inset-0 bg-black/30 flex items-center z-30">
-  //           <div className="ml-8 lg:ml-16 xl:ml-24 max-w-2xl">
-  //             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 logo">
-  //               Lavita Malam Jabba
-  //             </h1>
-  //             <p className="text-lg md:text-xl lg:text-2xl text-white/90">
-  //               Discover the ultimate Mountain Escape at Lavita Malam Jabba
-  //             </p>
-  //           </div>
-  //         </div>
-  //       </section>
-  //       <div className="h-screen" />
-  //       <section className="min-h-screen bg-black" />
-  //     </div>
-  //   )
-  // }
 
   return (
     <div ref={containerRef} className="relative">
@@ -387,8 +476,7 @@ const Home = () => {
           />
         </video>
 
-        {/* Professional Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-black/20 to-transparent z-20" />
+        <div className="absolute inset-0 bg-linear-to-br from-black/40 via-black/20 to-transparent z-20" />
         
         <div className="absolute inset-0 flex items-center z-30">
           <div className="ml-8 lg:ml-16 xl:ml-24 max-w-2xl">
@@ -397,7 +485,6 @@ const Home = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.2, ease: "easeOut" }}
             >
-              {/* Professional Title Animation */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -405,17 +492,12 @@ const Home = () => {
                 className="mb-6"
               >
                 <h1 className="text-5xl md:text-7xl lg:text-6xl font-bold text-white mb-4 leading-tight">
-                  <span className="bg-gradient-to-r from-white via-emerald-100 to-emerald-400 bg-clip-text text-transparent logo">
+                  <span className="bg-linear-to-r from-white via-emerald-100 to-emerald-400 bg-clip-text text-transparent logo">
                     Lavita Malam Jabba
                   </span>
-                  <br />
-                  {/* <span className="bg-gradient-to-r from-emerald-400 to-green-300 bg-clip-text text-transparent logo">
-                    Malam Jabba
-                  </span> */}
                 </h1>
               </motion.div>
 
-              {/* Professional Subtitle */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -425,17 +507,14 @@ const Home = () => {
                 <p className="text-xl md:text-2xl lg:text-3xl text-white/90 font-light mb-4">
                   Discover the Ultimate Mountain Escape
                 </p>
-                
-                {/* Elegant Divider */}
                 <motion.div
                   initial={{ scaleX: 0 }}
                   animate={{ scaleX: 1 }}
                   transition={{ duration: 1, delay: 0.9, ease: "easeOut" }}
-                  className="h-px bg-gradient-to-r from-emerald-400 to-transparent w-64"
+                  className="h-px bg-linear-to-r from-emerald-400 to-transparent w-64"
                 />
               </motion.div>
 
-              {/* Professional Description */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -443,19 +522,17 @@ const Home = () => {
                 className="mb-8"
               >
                 <p className="text-lg md:text-xl text-white/80 font-light leading-relaxed max-w-2xl">
-                  The region&apos;s premier fully serviced luxury hotel apartments, 
-                  perfectly positioned on Malam Jabba Road amidst the breathtaking Swat Valley.
+                  The region&apos;s premier fully serviced luxury hotel apartments, perfectly positioned on Malam Jabba Road amidst the breathtaking Swat Valley.
                 </p>
               </motion.div>
 
-              {/* CTA Button */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 1.4 }}
               >
                 <motion.button
-                  className="px-12 py-4 bg-gradient-to-r from-emerald-500 to-green-500 text-white font-semibold text-lg rounded-xl hover:shadow-2xl hover:shadow-emerald-500/40 transition-all duration-500 border border-emerald-400/40"
+                  className="px-12 py-4 bg-linear-to-r from-emerald-500 to-green-500 text-white font-semibold text-lg rounded-xl hover:shadow-2xl hover:shadow-emerald-500/40 transition-all duration-500 border border-emerald-400/40"
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.98 }}
                 >
@@ -465,29 +542,8 @@ const Home = () => {
             </motion.div>
           </div>
         </div>
-
-        {/* Scroll Indicator */}
-        {/* <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 2 }}
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-30"
-        >
-          <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center"
-          >
-            <motion.div
-              animate={{ y: [0, 12, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="w-1 h-3 bg-white/70 rounded-full mt-2"
-            />
-          </motion.div>
-        </motion.div> */}
       </section>
 
-      {/* SPACER */}
       <div className="h-screen" />
 
       {/* SECTION 2: MAIN CONTENT */}
@@ -513,9 +569,9 @@ const Home = () => {
                 viewport={{ once: true }}
                 className="inline-flex items-center gap-3 mb-6"
               >
-                <div className="w-12 h-0.5 bg-gradient-to-r from-transparent to-emerald-400" />
+                <div className="w-12 h-0.5 bg-linear-to-r from-transparent to-emerald-400" />
                 <span className="text-emerald-400 font-light tracking-widest text-sm uppercase">Premium Experience</span>
-                <div className="w-12 h-0.5 bg-gradient-to-l from-transparent to-emerald-400" />
+                <div className="w-12 h-0.5 bg-linear-to-l from-transparent to-emerald-400" />
               </motion.div>
 
               <motion.h2
@@ -525,11 +581,11 @@ const Home = () => {
                 viewport={{ once: true }}
                 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-6"
               >
-                <span className="bg-gradient-to-r from-white via-emerald-100 to-emerald-400 bg-clip-text text-transparent">
+                <span className="bg-linear-to-r from-white via-emerald-100 to-emerald-400 bg-clip-text text-transparent">
                   Unforgettable
                 </span>
                 <br />
-                <span className="bg-gradient-to-r from-emerald-400 to-green-300 bg-clip-text text-transparent">
+                <span className="bg-linear-to-r from-emerald-400 to-green-300 bg-clip-text text-transparent">
                   Moments
                 </span>
               </motion.h2>
@@ -576,7 +632,6 @@ const Home = () => {
               </div>
             </div>
 
-            {/* CAROUSEL DOTS */}
             <div className="flex justify-center items-center gap-4 mt-16">
               {experiences.map((_, index) => (
                 <motion.button
@@ -596,127 +651,90 @@ const Home = () => {
             </div>      
           </div>
 
-          {/* TIMELINE SECTION */}
-          <div ref={timelineRef} className="min-h-screen pt-32">
+          {/* ENHANCED EXTRA ORDINARY SERVICES SECTION - FIXED */}
+          <div className="min-h-screen pt-32" id="extraordinary-services">
             <div className="text-center mb-20" id="services">
-                <motion.div
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
                 viewport={{ once: true }}
-                className="inline-flex items-center gap-3"
+                className="inline-flex items-center gap-3 mb-6"
               >
-                <div className="w-12 h-0.5 bg-gradient-to-r from-transparent to-emerald-400" />
-                <span className="text-emerald-400 font-light tracking-widest text-sm uppercase">Premium Services</span>
-                <div className="w-12 h-0.5 bg-gradient-to-l from-transparent to-emerald-400" />
+                <div className="w-12 h-0.5 bg-linear-to-r from-transparent to-emerald-400" />
+                <span className="text-emerald-400 font-light tracking-widest text-sm uppercase">Beyond Excellence</span>
+                <div className="w-12 h-0.5 bg-linear-to-l from-transparent to-emerald-400" />
               </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: -50 }}
+
+              <motion.h2
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
+                transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
                 viewport={{ once: true }}
-                className="mb-12"
+                className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6"
               >
-                <motion.h2
-                  initial={{ opacity: 0, y: -30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
-                  viewport={{ once: true }}
-                  className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6"
-                >
-                  <span className="bg-gradient-to-r from-green-300 to-emerald-400 bg-clip-text text-transparent">
-                    Extra Ordinary Services
-                  </span>
-                </motion.h2>
-              </motion.div>
+                <span className="bg-linear-to-r from-green-300 to-emerald-400 bg-clip-text text-transparent">
+                  Extra Ordinary Services
+                </span>
+              </motion.h2>
+
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.3, ease: "easeOut" }}
+                viewport={{ once: true }}
+                className="text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed"
+              >
+                Experience services that transcend ordinary luxury, crafted with meticulous attention to detail and designed to create unforgettable moments.
+              </motion.p>
             </div>
 
-            <div className="relative">
-              <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-emerald-500/30 transform -translate-x-1/2 z-0">
-                <motion.div
-                  style={{ scaleY: timelineScrollProgress }}
-                  className="h-full w-full bg-gradient-to-b from-emerald-400 to-green-500 origin-top shadow-[0_0_20px_5px_rgba(52,211,153,0.4)]"
+            {/* FIXED: Only render services from displayedServices array */}
+            <div className="space-y-20">
+              {displayedServices.map((service, index) => (
+                <ServiceCard 
+                  key={`${service.id}-${index}`}
+                  service={service} 
+                  index={index}
+                  totalCount={displayedServices.length}
                 />
-              </div>
-
-              {timelinePoints.map((point, index) => (
-                <div
-                  key={point.id}
-                  id={`point-${index}`}
-                  className={`relative flex flex-col lg:flex-row items-center justify-between mb-24 lg:mb-40 ${index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'}`}
-                >
-                  <motion.div
-                    initial={{ opacity: 0, x: index % 2 === 0 ? -100 : 100 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.7, ease: "easeOut" }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    className={`w-full lg:max-w-lg z-20 ${index % 2 === 0 ? 'lg:mr-8' : 'lg:ml-8'} order-2 lg:order-1`}
-                  >
-                    <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/90 backdrop-blur-xl rounded-3xl p-6 lg:p-8 border-2 border-emerald-400/30 shadow-2xl shadow-emerald-500/20 w-full">
-                      <h3 className="text-2xl lg:text-3xl font-bold text-white mb-4">{point.title}</h3>
-                      <p className="text-base lg:text-lg text-slate-300 leading-relaxed mb-6">{point.description}</p>
-                      <motion.button
-                        className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-green-500 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-emerald-500/25 transition-all duration-300 w-full lg:w-auto"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        Learn More
-                      </motion.button>
-                    </div>
-                  </motion.div>
-
-                  <div className="relative z-10 flex-shrink-0 order-1 lg:order-2 mb-6 lg:mb-0">
-                    <div className={`absolute top-1/2 w-8 lg:w-32 h-1 bg-emerald-400/50 ${index % 2 === 0 ? 'right-full' : 'left-full'} transform -translate-y-1/2 z-0 hidden lg:block`} />
-                    
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      whileInView={{ scale: 1 }}
-                      transition={{ duration: 0.5, delay: 0.3 }}
-                      viewport={{ once: true }}
-                      className={`w-8 h-8 rounded-full border-4 border-white shadow-2xl relative z-20 ${currentPoint === index ? 'bg-emerald-400 scale-125 shadow-emerald-500/50' : 'bg-slate-700'} transition-all duration-300`}
-                    />
-                  </div>
-
-                  <motion.div
-                    initial={{ opacity: 0, x: index % 2 === 0 ? 100 : -100 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.7, ease: "easeOut" }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    className={`w-full lg:max-w-md z-20 ${index % 2 === 0 ? 'lg:ml-8' : 'lg:mr-8'} order-3 hidden lg:block`}
-                  >
-                    <div className="relative h-64 rounded-2xl overflow-hidden border-2 border-emerald-400/30 shadow-2xl">
-                      <Image
-                        src={point.image}
-                        alt={point.title}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                    </div>
-                  </motion.div>
-                </div>
               ))}
             </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-              viewport={{ once: true }}
-              className="text-center mt-20"
-            >
-              <motion.button
-                className="px-12 py-5 bg-gradient-to-r from-emerald-500 to-green-500 text-white font-bold text-lg rounded-2xl hover:shadow-3xl hover:shadow-emerald-500/40 transition-all duration-500 border-2 border-emerald-400/40"
-                whileHover={{ scale: 1.08, boxShadow: "0 25px 50px rgba(16, 185, 129, 0.4)" }}
-                whileTap={{ scale: 0.95 }}
+            {/* View More Button */}
+            {extraordinaryServices.length > 3 && (
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
+                viewport={{ once: true }}
+                className="text-center mt-20"
               >
-                Start Your Journey
-              </motion.button>
-            </motion.div>
+                <motion.button
+                  onClick={() => setShowAllServices(!showAllServices)}
+                  className="px-12 py-5 bg-linear-to-r from-emerald-500 to-green-500 text-white font-bold text-lg rounded-2xl hover:shadow-3xl hover:shadow-emerald-500/40 transition-all duration-500 border-2 border-emerald-400/40 group"
+                  whileHover={{ scale: 1.08, boxShadow: "0 25px 50px rgba(16, 185, 129, 0.4)" }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <span className="flex items-center gap-3">
+                    {showAllServices ? 'Show Less Services' : 'View More Services'}
+                    <motion.svg 
+                      className="w-5 h-5 transform transition-transform duration-300"
+                      fill="none" 
+                      viewBox="0 0 24 24" 
+                      stroke="currentColor"
+                      animate={{ rotate: showAllServices ? 180 : 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </motion.svg>
+                  </span>
+                </motion.button>
+              </motion.div>
+            )}
           </div>
 
-          {/* ABOUT SECTION WITH ANIMATED STATS */}
+          {/* ABOUT SECTION */}
           <div className="min-h-screen pt-32 flex items-center">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center" id="about">
               <motion.div
@@ -734,9 +752,9 @@ const Home = () => {
                     viewport={{ once: true }}
                     className="inline-flex items-center gap-3 mb-6"
                   >
-                    <div className="w-12 h-0.5 bg-gradient-to-r from-transparent to-emerald-400" />
+                    <div className="w-12 h-0.5 bg-linear-to-r from-transparent to-emerald-400" />
                     <span className="text-emerald-400 font-light tracking-widest text-sm uppercase">About Us</span>
-                    <div className="w-12 h-0.5 bg-gradient-to-l from-transparent to-emerald-400" />
+                    <div className="w-12 h-0.5 bg-linear-to-l from-transparent to-emerald-400" />
                   </motion.div>
 
                   <motion.h2
@@ -746,11 +764,11 @@ const Home = () => {
                     viewport={{ once: true }}
                     className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6"
                   >
-                    <span className="bg-gradient-to-r from-white via-emerald-100 to-emerald-400 bg-clip-text text-transparent">
+                    <span className="bg-linear-to-r from-white via-emerald-100 to-emerald-400 bg-clip-text text-transparent">
                       Lavita
                     </span>
                     <br />
-                    <span className="bg-gradient-to-r from-emerald-400 to-green-300 bg-clip-text text-transparent">
+                    <span className="bg-linear-to-r from-emerald-400 to-green-300 bg-clip-text text-transparent">
                       Malam Jabba
                     </span>
                   </motion.h2>
@@ -778,7 +796,6 @@ const Home = () => {
                   we provide a sanctuary for those seeking both adventure and relaxation in one of Pakistan&apos;s most breathtaking locations.
                 </motion.p>
 
-                {/* ANIMATED STATS */}
                 <motion.div
                   ref={statsRef}
                   initial={{ opacity: 0, y: 30 }}
@@ -812,7 +829,7 @@ const Home = () => {
                   className="pt-8"
                 >
                   <motion.button
-                    className="px-12 py-5 bg-gradient-to-r from-emerald-500 to-green-500 text-white font-bold text-lg rounded-2xl hover:shadow-3xl hover:shadow-emerald-500/40 transition-all duration-500 border-2 border-emerald-400/40"
+                    className="px-12 py-5 bg-linear-to-r from-emerald-500 to-green-500 text-white font-bold text-lg rounded-2xl hover:shadow-3xl hover:shadow-emerald-500/40 transition-all duration-500 border-2 border-emerald-400/40"
                     whileHover={{ scale: 1.05, boxShadow: "0 25px 50px rgba(16, 185, 129, 0.4)" }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -833,13 +850,11 @@ const Home = () => {
                     src={box1Img}
                     alt="Lavita Malam Jabba Resort"
                     width={600}
+                    loading="lazy"
                     height={800}
                     className="w-full h-auto object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                  <div className="absolute top-6 right-6 w-16 h-16 bg-emerald-400/20 backdrop-blur-lg rounded-2xl border-2 border-emerald-400/30 flex items-center justify-center">
-                    <span className="text-2xl">🏔️</span>
-                  </div>
+                  <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent" />
                 </div>
                 
                 <motion.div
@@ -847,7 +862,7 @@ const Home = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.5, ease: "easeOut" }}
                   viewport={{ once: true }}
-                  className="absolute -bottom-6 -left-6 bg-gradient-to-br from-slate-800/90 to-slate-900/95 backdrop-blur-xl rounded-2xl p-6 border-2 border-emerald-400/30 shadow-2xl"
+                  className="absolute -bottom-6 -left-6 bg-linear-to-br from-slate-800/90 to-slate-900/95 backdrop-blur-xl rounded-2xl p-6 border-2 border-emerald-400/30 shadow-2xl"
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-3 h-3 bg-emerald-400 rounded-full animate-pulse" />
@@ -858,36 +873,9 @@ const Home = () => {
             </div>
           </div>
         </div>
-
-        {/* TIMELINE NAVIGATION DOTS */}
-        <AnimatePresence>
-          {isTimelineInView && (
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              className="fixed right-8 top-1/2 transform -translate-y-1/2 z-30 flex flex-col gap-4"
-            >
-              {timelinePoints.map((_, index) => (
-                <motion.button
-                  key={index}
-                  onClick={() => navigateToPoint(index)}
-                  className={`relative rounded-full transition-all duration-300 ${currentPoint === index ? 'bg-emerald-400 shadow-lg shadow-emerald-500/50' : 'bg-slate-600 hover:bg-slate-500'}`}
-                  whileHover={{ scale: 1.3 }}
-                  whileTap={{ scale: 0.9 }}
-                  animate={{
-                    scale: currentPoint === index ? 1.2 : 1,
-                    width: currentPoint === index ? 16 : 12,
-                    height: currentPoint === index ? 16 : 12,
-                  }}
-                />
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
       </motion.section>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

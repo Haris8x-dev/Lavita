@@ -1,9 +1,10 @@
-import React from 'react'
-
-const swimmingPool = () => {
+import SwimmingPool from "@/components/pages/facilities-subpages/swimmingPool";
+const swimmingPoolPage = () => {
   return (
-    <div>swimmingPool</div>
+    <div>
+      <SwimmingPool/>
+    </div>
   )
 }
 
-export default swimmingPool;
+export default swimmingPoolPage;

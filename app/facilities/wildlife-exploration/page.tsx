@@ -1,8 +1,10 @@
-import React from 'react'
+import Wildlife from "@/components/pages/facilities-subpages/wildlife";
 
 const wildlifeExploration = () => {
   return (
-    <div>wildlifeExploration</div>
+    <div>
+      <Wildlife/>
+    </div>
   )
 }
 

@@ -169,9 +169,9 @@ const ContactPage: React.FC = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="inline-flex items-center gap-3 mb-4"
           >
-            <div className="w-8 h-0.5 bg-gradient-to-r from-transparent to-emerald-400"></div>
+            <div className="w-8 h-0.5 bg-linear-to-r from-transparent to-emerald-400"></div>
             <span className="text-emerald-400 font-light tracking-widest text-xs uppercase">Get In Touch</span>
-            <div className="w-8 h-0.5 bg-gradient-to-l from-transparent to-emerald-400"></div>
+            <div className="w-8 h-0.5 bg-linear-to-l from-transparent to-emerald-400"></div>
           </motion.div>
 
           <motion.h1
@@ -180,11 +180,11 @@ const ContactPage: React.FC = () => {
             transition={{ duration: 0.7, delay: 0.3 }}
             className="text-3xl md:text-4xl font-bold text-white mb-4"
           >
-            <span className="bg-gradient-to-r from-white via-emerald-100 to-emerald-400 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-white via-emerald-100 to-emerald-400 bg-clip-text text-transparent">
               Contact
             </span>
             <br />
-            <span className="bg-gradient-to-r from-emerald-400 to-green-300 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-emerald-400 to-green-300 bg-clip-text text-transparent">
               Lavita Malam Jabba
             </span>
           </motion.h1>
@@ -217,10 +217,10 @@ const ContactPage: React.FC = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.6 + index * 0.1 }}
-                  className="bg-gradient-to-br from-slate-800/80 to-slate-900/90 backdrop-blur-xl rounded-xl p-4 border border-slate-700/50 hover:border-emerald-400/30 transition-all duration-300"
+                  className="bg-linear-to-br from-slate-800/80 to-slate-900/90 backdrop-blur-xl rounded-xl p-4 border border-slate-700/50 hover:border-emerald-400/30 transition-all duration-300"
                 >
                   <div className="flex items-start space-x-3">
-                    <div className={`w-8 h-8 bg-gradient-to-r ${item.color} rounded-lg flex items-center justify-center text-white shadow-lg flex-shrink-0`}>
+                    <div className={`w-8 h-8 bg-linear-to-r ${item.color} rounded-lg flex items-center justify-center text-white shadow-lg shrink-0`}>
                       {item.icon}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -228,7 +228,7 @@ const ContactPage: React.FC = () => {
                       {item.href ? (
                         <a 
                           href={item.href} 
-                          className="text-emerald-400 font-medium text-xs hover:text-emerald-300 transition-colors block mb-1 break-words"
+                          className="text-emerald-400 font-medium text-xs hover:text-emerald-300 transition-colors block mb-1 wrap-break-word"
                         >
                           {item.description}
                         </a>
@@ -243,7 +243,7 @@ const ContactPage: React.FC = () => {
             </div>
 
             {/* Social Media Links - More Compact */}
-            <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/90 backdrop-blur-xl rounded-xl p-4 border border-slate-700/50">
+            <div className="bg-linear-to-br from-slate-800/80 to-slate-900/90 backdrop-blur-xl rounded-xl p-4 border border-slate-700/50">
               <h3 className="text-white font-semibold text-sm mb-3">Follow Us</h3>
               <div className="grid grid-cols-2 gap-2">
                 {socialLinks.map((social) => (
@@ -266,7 +266,7 @@ const ContactPage: React.FC = () => {
             </div>
 
             {/* Business Hours - New Compact Section */}
-            {/* <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/90 backdrop-blur-xl rounded-xl p-4 border border-slate-700/50">
+            {/* <div className="bg-linear-to-br from-slate-800/80 to-slate-900/90 backdrop-blur-xl rounded-xl p-4 border border-slate-700/50">
               <h3 className="text-white font-semibold text-sm mb-3">Business Hours</h3>
               <div className="space-y-2 text-xs">
                 <div className="flex justify-between text-slate-300">
@@ -292,7 +292,7 @@ const ContactPage: React.FC = () => {
             transition={{ duration: 0.8, delay: 0.5 }}
             className="lg:col-span-3"
           >
-            <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/90 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50">
+            <div className="bg-linear-to-br from-slate-800/80 to-slate-900/90 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50">
               <h2 className="text-xl font-bold text-white mb-2">Send us a Message</h2>
               <p className="text-slate-400 text-sm mb-6">Fill out the form below and we'll get back to you within 24 hours.</p>
 
@@ -401,7 +401,7 @@ const ContactPage: React.FC = () => {
                 <motion.button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full px-6 py-3 bg-gradient-to-r from-emerald-500 to-green-500 text-white font-semibold text-sm rounded-lg hover:shadow-xl hover:shadow-emerald-500/30 transition-all duration-500 border border-emerald-400/40 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full px-6 py-3 bg-linear-to-r from-emerald-500 to-green-500 text-white font-semibold text-sm rounded-lg hover:shadow-xl hover:shadow-emerald-500/30 transition-all duration-500 border border-emerald-400/40 disabled:opacity-50 disabled:cursor-not-allowed"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >

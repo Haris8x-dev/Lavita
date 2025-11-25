@@ -1,9 +1,11 @@
-import React from 'react'
+import OutdoorActivities from "@/components/pages/facilities-subpages/outdoorActivities";
 
-const outdoorActivities = () => {
+const outdoorActivitiesPage = () => {
   return (
-    <div>outdoorActivities</div>
+    <div>
+      <OutdoorActivities/>
+    </div>
   )
 }
 
-export default outdoorActivities;
+export default outdoorActivitiesPage;

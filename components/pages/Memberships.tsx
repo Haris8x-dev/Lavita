@@ -78,9 +78,9 @@ const Memberships: React.FC = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="inline-flex items-center gap-3 mb-4"
           >
-            <div className="w-8 h-0.5 bg-gradient-to-r from-transparent to-emerald-400"></div>
+            <div className="w-8 h-0.5 bg-linear-to-r from-transparent to-emerald-400"></div>
             <span className="text-emerald-400 font-light tracking-widest text-xs uppercase">Exclusive Memberships</span>
-            <div className="w-8 h-0.5 bg-gradient-to-l from-transparent to-emerald-400"></div>
+            <div className="w-8 h-0.5 bg-linear-to-l from-transparent to-emerald-400"></div>
           </motion.div>
 
           <motion.h1
@@ -89,11 +89,11 @@ const Memberships: React.FC = () => {
             transition={{ duration: 0.7, delay: 0.3 }}
             className="text-3xl md:text-4xl font-bold text-white mb-4"
           >
-            <span className="bg-gradient-to-r from-white via-emerald-100 to-emerald-400 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-white via-emerald-100 to-emerald-400 bg-clip-text text-transparent">
               Elevate Your
             </span>
             <br />
-            <span className="bg-gradient-to-r from-emerald-400 to-green-300 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-emerald-400 to-green-300 bg-clip-text text-transparent">
               Experience
             </span>
           </motion.h1>
@@ -116,7 +116,7 @@ const Memberships: React.FC = () => {
           transition={{ duration: 0.6, delay: 0.5 }}
           className="flex justify-center mb-8"
         >
-          <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/90 backdrop-blur-xl rounded-xl p-1 border border-slate-700/50">
+          <div className="bg-linear-to-br from-slate-800/80 to-slate-900/90 backdrop-blur-xl rounded-xl p-1 border border-slate-700/50">
             <div className="flex bg-slate-700 rounded-lg p-1">
               <button
                 onClick={() => setBillingCycle('monthly')}
@@ -164,7 +164,7 @@ const Memberships: React.FC = () => {
               {/* Popular Badge - Smaller */}
               {plan.popular && (
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-20">
-                  <div className="bg-gradient-to-r from-emerald-500 to-green-500 text-white px-4 py-1.5 rounded-full font-semibold text-xs shadow-lg">
+                  <div className="bg-linear-to-r from-emerald-500 to-green-500 text-white px-4 py-1.5 rounded-full font-semibold text-xs shadow-lg">
                     Most Popular
                   </div>
                 </div>
@@ -172,7 +172,7 @@ const Memberships: React.FC = () => {
 
               {/* Compact Plan Card */}
               <div
-                className={`h-full bg-gradient-to-br from-slate-800/90 to-slate-900/95 backdrop-blur-xl rounded-2xl p-6 border-2 ${
+                className={`h-full bg-linear-to-br from-slate-800/90 to-slate-900/95 backdrop-blur-xl rounded-2xl p-6 border-2 ${
                   selectedPlan === key
                     ? 'border-emerald-400 shadow-xl shadow-emerald-500/20'
                     : 'border-slate-700 hover:border-slate-600'
@@ -206,7 +206,7 @@ const Memberships: React.FC = () => {
                 <div className="space-y-2 mb-6 max-h-32 overflow-y-auto pr-2">
                   {plan.features.map((feature, index) => (
                     <div key={index} className="flex items-start gap-2">
-                      <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full flex-shrink-0 mt-1.5" />
+                      <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full shrink-0 mt-1.5" />
                       <span className="text-slate-300 text-xs leading-relaxed">{feature}</span>
                     </div>
                   ))}
@@ -216,7 +216,7 @@ const Memberships: React.FC = () => {
                 <motion.button
                   className={`w-full py-3 font-semibold rounded-lg transition-all duration-300 text-sm ${
                     selectedPlan === key
-                      ? 'bg-gradient-to-r from-emerald-500 to-green-500 text-white hover:shadow-lg hover:shadow-emerald-500/30'
+                      ? 'bg-linear-to-r from-emerald-500 to-green-500 text-white hover:shadow-lg hover:shadow-emerald-500/30'
                       : 'bg-slate-700 text-slate-300 hover:bg-slate-600 hover:text-white'
                   }`}
                   whileHover={{ scale: 1.02 }}
@@ -234,7 +234,7 @@ const Memberships: React.FC = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.8 }}
-          className="bg-gradient-to-br from-slate-800/80 to-slate-900/90 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50"
+          className="bg-linear-to-br from-slate-800/80 to-slate-900/90 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50"
         >
           <div className="text-center mb-6">
             <h2 className="text-xl font-bold text-white mb-2">All Members Enjoy</h2>
@@ -267,7 +267,7 @@ const Memberships: React.FC = () => {
                 transition={{ duration: 0.6, delay: 0.9 + index * 0.1 }}
                 className="text-center p-4"
               >
-                <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-green-500 rounded-lg flex items-center justify-center mx-auto mb-3">
+                <div className="w-8 h-8 bg-linear-to-r from-emerald-500 to-green-500 rounded-lg flex items-center justify-center mx-auto mb-3">
                   <div className="w-1.5 h-1.5 bg-white rounded-full" />
                 </div>
                 <h3 className="text-white font-semibold text-sm mb-1">{benefit.title}</h3>

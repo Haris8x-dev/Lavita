@@ -34,61 +34,100 @@ const Navbar: React.FC = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
+  // Safe navigation function
   const goToHash = (hash: string) => {
-    router.push(`/${hash}`);
+    if (pathname === '/') {
+      // If we're already on home page, scroll to section
+      const element = document.getElementById(hash.replace('#', ''));
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      // Navigate to home page with hash
+      router.push(`/#${hash}`);
+    }
   };
 
   // Navigation Data
   const navData: NavItem[] = [
     { id: '1', label: 'Home', href: '/' },
-    { id: '2', label: 'Services', href: '/#services' },
+    { id: '2', label: 'Services', href: '#services' },
+    { id: '3', label: 'About', href: '#about' },
     {
-      id: '3',
+      id: '4',
       label: 'Facilities',
       href: '/facilities',
       dropdown: [
-        { id: '3-1', label: 'Kids Activity Zone', href: '/facilities/cardio-zone' },
-        { id: '3-2', label: 'Seasonal Activities', href: '/facilities/weight-training' },
-        { id: '3-3', label: 'Conferenced Halls', href: '/facilities/swimming-pool' },
-        { id: '3-4', label: 'Special Events', href: '/facilities/yoga-studio' },
-        { id: '3-5', label: 'Outdoor Activities', href: '/facilities/basketball' },
-        { id: '3-6', label: 'Indoor Activities', href: '/facilities/basketbal' },
-        { id: '3-7', label: 'Installment Rooms', href: '/facilities/basketball-co' },
-        { id: '3-8', label: 'Concerts', href: '/facilities/basketball-co' },
-        { id: '3-9', label: 'WildLife', href: '/facilities/basketball-cou' },
-        { id: '3-10', label: 'Others', href: '/facilities/basketball-cou' },
+        { id: '4-1', label: 'Kids Activity Zone', href: '/facilities/kids-activity-zone' },
+        { id: '4-2', label: 'Conference Halls', href: '/facilities/conference-halls' },
+        { id: '4-3', label: 'Swimming Pool', href: '/facilities/swimming-pool' },
+        { id: '4-4', label: 'Special Events', href: '/facilities/special-events' },
+        { id: '4-5', label: 'Health Clubs', href: '/facilities/health-clubs' },
+        { id: '4-6', label: 'Indoor Activities', href: '/facilities/indoor-activities' },
+        { id: '4-7', label: 'Outdoor Activities', href: '/facilities/outdoor-activities' },
+        { id: '4-8', label: 'WildLife', href: '/facilities/wildlife-exploration' },
       ],
     },
-    { id: '4', label: 'Memberships', href: '/memberships' },
-    { id: '5', label: 'About', href: '/#about' },
-    { id: '6', label: 'Contact', href: '/contact' },
+    { id: '5', label: 'Contact', href: '/contact' },
   ];
 
   // Scroll detection for active hash
   useEffect(() => {
     const handleScroll = () => {
+      if (pathname !== '/') return; // Only handle scroll on home page
+
       const sections = ['services', 'about'];
       const scrollPosition = window.scrollY;
       const windowHeight = window.innerHeight;
-
+      
       setIsScrolledToSection(scrollPosition > windowHeight * 0.2);
+
+      let activeSection = '';
+      let minDistance = Infinity;
 
       for (const section of sections) {
         const element = document.getElementById(section);
         if (element) {
           const rect = element.getBoundingClientRect();
-          if (rect.top <= 100 && rect.bottom >= 100) {
-            setCurrentHash(`#${section}`);
-            return;
+          const elementTop = rect.top + window.scrollY;
+          const elementBottom = elementTop + rect.height;
+          
+          const viewportCenter = scrollPosition + (windowHeight / 2);
+          const distanceToTop = Math.abs(viewportCenter - elementTop);
+          const distanceToBottom = Math.abs(viewportCenter - elementBottom);
+          const distance = Math.min(distanceToTop, distanceToBottom);
+
+          const isInViewport = rect.top <= 100 && rect.bottom >= 100;
+
+          if (isInViewport) {
+            activeSection = section;
+            break;
+          } else if (distance < minDistance) {
+            minDistance = distance;
+            activeSection = section;
           }
         }
       }
+
+      if (activeSection && minDistance < windowHeight * 2) {
+        setCurrentHash(`#${activeSection}`);
+      } else if (scrollPosition < 100) {
+        setCurrentHash('');
+      }
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    // Only add scroll listener if we're on home page
+    if (pathname === '/') {
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      handleScroll();
+    }
+
+    return () => {
+      if (pathname === '/') {
+        window.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, [pathname]);
 
   // Update hash from URL
   useEffect(() => {
@@ -148,26 +187,32 @@ const Navbar: React.FC = () => {
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
-  // Active checker
+  // Active checker - IMPROVED LOGIC
   const isActive = (href: string) => {
     const hasHash = href.includes('#');
-    if (!hasHash) return pathname === href;
+    
+    if (!hasHash) {
+      return pathname === href;
+    }
 
-    const [_, rawHash] = href.split('#');
-    const targetHash = `#${rawHash}`;
+    // For hash links, only active on home page
     if (pathname !== '/') return false;
+    
+    const targetHash = href.startsWith('#') ? href : `#${href.split('#')[1]}`;
+    
+    // If we have a current hash and it matches the target
     if (currentHash === targetHash) return true;
 
-    if (href === '/' && pathname === '/' && !currentHash) return true;
+    // Home link is active when no hash is present and we're at the top
+    if (href === '/' && !currentHash && typeof window !== 'undefined' && window.scrollY < 100) return true;
 
     return false;
   };
 
-  // RENDER DESKTOP LINK (fixed)
+  // RENDER DESKTOP LINK
   const renderNavLink = (item: NavItem) => {
     const isItemActive = isActive(item.href);
-
-    const isHashLink = item.label === 'Services' || item.label === 'About';
+    const isHashLink = item.href.startsWith('#');
 
     return (
       <div
@@ -176,11 +221,11 @@ const Navbar: React.FC = () => {
         onMouseEnter={() => handleNavLinkHover(item.id)}
         onMouseLeave={handleNavLinkLeave}
       >
-        {/* If it's Services/About → use our custom routing */}
+        {/* If it's a hash link → use our custom routing */}
         {isHashLink ? (
           <a
             onClick={() => {
-              goToHash(item.href.replace('/', ''));
+              goToHash(item.href);
               closeMobileMenu();
             }}
             className={`relative px-4 py-2 cursor-pointer transition-colors duration-200 font-medium flex items-center gap-2 ${
@@ -237,18 +282,17 @@ const Navbar: React.FC = () => {
     );
   };
 
-  // RENDER MOBILE LINK (fixed)
+  // RENDER MOBILE LINK
   const renderMobileNavLink = (item: NavItem) => {
     const isItemActive = isActive(item.href);
-    const isHashLink = item.label === 'Services' || item.label === 'About';
+    const isHashLink = item.href.startsWith('#');
 
     return (
       <div key={item.id} className="relative">
-
         {isHashLink ? (
           <a
             onClick={() => {
-              goToHash(item.href.replace('/', ''));
+              goToHash(item.href);
               closeMobileMenu();
             }}
             className={`px-4 py-3 cursor-pointer transition-colors duration-200 font-medium border-b border-white/10 flex items-center gap-2 ${
@@ -321,11 +365,11 @@ const Navbar: React.FC = () => {
       <li
         key={item.id}
         style={{ transitionDelay: `${index * 50}ms` }}
-        className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200"
+        className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 group/dropdown-item"
       >
         <Link
           href={item.href}
-          className={`relative block px-4 py-3 text-sm text-gray-700 hover:text-green-600 transition-colors duration-200 overflow-hidden group/dropdown-item ${
+          className={`relative block px-4 py-3 text-sm text-gray-700 hover:text-green-600 transition-colors duration-200 overflow-hidden ${
             isItemActive ? 'text-green-600' : ''
           }`}
           onClick={closeMobileMenu}
@@ -366,12 +410,12 @@ const Navbar: React.FC = () => {
 
             {/* DESKTOP BUTTONS */}
             <div className="hidden lg:flex items-center space-x-2 shrink-0 pl-18">
-              <button className="px-4 py-2 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors duration-200 font-medium text-sm whitespace-nowrap">
+              <Link href="/memberships" className="px-4 py-2 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors duration-200 font-medium text-sm whitespace-nowrap">
                 Become a Member
-              </button>
-              <button className="px-4 py-2 border border-green-600 text-green-600 bg-white rounded-full hover:bg-green-50 transition-colors duration-200 font-medium text-sm whitespace-nowrap">
+              </Link>
+              <Link href="/member-portal" className="px-4 py-2 border border-green-600 text-green-600 bg-white rounded-full hover:bg-green-50 transition-colors duration-200 font-medium text-sm whitespace-nowrap">
                 Member Portal
-              </button>
+              </Link>
             </div>
 
             {/* MOBILE MENU BUTTON */}
@@ -442,18 +486,20 @@ const Navbar: React.FC = () => {
 
             {/* MOBILE BUTTONS */}
             <div className="mt-8 space-y-4 pb-8">
-              <button
-                className="w-full px-4 py-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors duration-200 font-medium"
+              <Link
+                href="/memberships"
+                className="block w-full px-4 py-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors duration-200 font-medium text-center"
                 onClick={closeMobileMenu}
               >
                 Become a Member
-              </button>
-              <button
-                className="w-full px-4 py-3 border border-green-600 text-green-600 bg-white rounded-full hover:bg-green-50 transition-colors duration-200 font-medium"
+              </Link>
+              <Link
+                href="/member-portal"
+                className="block w-full px-4 py-3 border border-green-600 text-green-600 bg-white rounded-full hover:bg-green-50 transition-colors duration-200 font-medium text-center"
                 onClick={closeMobileMenu}
               >
                 Member Portal
-              </button>
+              </Link>
             </div>
           </div>
         </div>

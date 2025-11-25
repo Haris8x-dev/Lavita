@@ -1,9 +1,11 @@
-import React from 'react'
+import HealthClubs from "@/components/pages/facilities-subpages/healthClubs"
 
-const HealthClub = () => {
+const HealthClubsPage = () => {
   return (
-    <div>HealthClub</div>
+    <div>
+      <HealthClubs/>
+    </div>
   )
 }
 
-export default HealthClub
+export default HealthClubsPage;

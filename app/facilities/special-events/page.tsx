@@ -1,9 +1,11 @@
-import React from 'react'
+import SpecialEvents from "@/components/pages/facilities-subpages/specialEvents";
 
-const specialEvents = () => {
+const specialEventsPage = () => {
   return (
-    <div>specialEvents</div>
+    <div>
+      <SpecialEvents/>
+    </div>
   )
 }
 
-export default specialEvents;
+export default specialEventsPage;
