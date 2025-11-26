@@ -1,7 +1,7 @@
 'use client'
 
-import { motion, useScroll, useTransform, AnimatePresence, useMotionValueEvent } from "framer-motion"
-import { useRef, useState, useEffect, useActionState, useMemo } from "react"
+import { motion, useScroll, useTransform } from "framer-motion"
+import { useRef, useState, useEffect, useMemo } from "react"
 import Image from "next/image"
 import Link from 'next/link';
 
@@ -62,35 +62,13 @@ const CountUp = ({ end, duration = 2, suffix = "" }: { end: number; duration?: n
   return <span ref={ref}>{count}{suffix}</span>;
 };
 
-// Carousel state management
-function carouselReducer(state: { activeIndex: number; direction: number }, action: 'next' | 'prev' | number) {
-  const totalSlides = 3;
-  
-  if (action === 'next') {
-    const nextIndex = (state.activeIndex + 1) % totalSlides;
-    return { activeIndex: nextIndex, direction: 1 };
-  }
-  
-  if (action === 'prev') {
-    const prevIndex = (state.activeIndex - 1 + totalSlides) % totalSlides;
-    return { activeIndex: prevIndex, direction: -1 };
-  }
-  
-  if (typeof action === 'number') {
-    const direction = action > state.activeIndex ? 1 : -1;
-    return { activeIndex: action, direction };
-  }
-  
-  return state;
-}
-
 const Home = () => {
   const containerRef = useRef<HTMLDivElement>(null)
   const section2Ref = useRef<HTMLDivElement>(null)
   const statsRef = useRef<HTMLDivElement>(null)
   
   const [isMounted, setIsMounted] = useState(false)
-  const [carouselState, carouselAction] = useActionState(carouselReducer, {
+  const [carouselState, setCarouselState] = useState({
     activeIndex: 0,
     direction: 0
   });
@@ -196,9 +174,22 @@ const Home = () => {
   ]
 
   // Navigation functions
-  const nextSlide = () => carouselAction('next')
-  const prevSlide = () => carouselAction('prev')
-  const goToSlide = (index: number) => carouselAction(index)
+  const nextSlide = () => {
+    const totalSlides = experiences.length;
+    const nextIndex = (carouselState.activeIndex + 1) % totalSlides;
+    setCarouselState({ activeIndex: nextIndex, direction: 1 });
+  }
+
+  const prevSlide = () => {
+    const totalSlides = experiences.length;
+    const prevIndex = (carouselState.activeIndex - 1 + totalSlides) % totalSlides;
+    setCarouselState({ activeIndex: prevIndex, direction: -1 });
+  }
+
+  const goToSlide = (index: number) => {
+    const direction = index > carouselState.activeIndex ? 1 : -1;
+    setCarouselState({ activeIndex: index, direction });
+  }
 
   // Animation configs
   const carouselTransition = {
@@ -250,7 +241,7 @@ const Home = () => {
 
   const { leftIndex, centerIndex, rightIndex } = getCardIndices();
 
-  // Get services to display - FIXED: Only use one array, not multiple render sections
+  // Get services to display
   const displayedServices = useMemo(() => (
     showAllServices ? extraordinaryServices : extraordinaryServices.slice(0, 3)
   ), [showAllServices, extraordinaryServices]);
@@ -362,25 +353,6 @@ const Home = () => {
                 Personalized
               </span>
             </div>
-
-            {/* CTA Button
-            <motion.button
-              className="mt-8 px-8 py-4 bg-linear-to-r from-emerald-500 to-green-500 text-white font-semibold rounded-xl hover:shadow-2xl hover:shadow-emerald-500/30 transition-all duration-500 border border-emerald-400/30 group/btn"
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <span className="flex items-center gap-3">
-                Experience Now
-                <svg 
-                  className="w-4 h-4 transform group-hover/btn:translate-x-1 transition-transform duration-300" 
-                  fill="none" 
-                  viewBox="0 0 24 24" 
-                  stroke="currentColor"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-              </span>
-            </motion.button> */}
           </motion.div>
         </div>
 
@@ -459,8 +431,9 @@ const Home = () => {
 
   return (
     <div ref={containerRef} className="relative">
-      {/* SECTION 1: PROFESSIONAL HERO WITH VIDEO BACKGROUND */}
+      {/* SECTION 1: PROFESSIONAL HERO WITH VIDEO BACKGROUND - FIXED */}
       <section className="fixed top-0 left-0 w-full h-screen -z-10">
+        {/* FIXED: Removed invalid div inside video and used poster attribute */}
         <video
           autoPlay
           loop
@@ -468,12 +441,10 @@ const Home = () => {
           playsInline
           className="absolute top-0 left-0 w-full h-full object-cover z-10"
           preload="metadata"
+          poster={hotelFallback} // CORRECT: Using poster attribute for fallback image
         >
           <source src={hotelVideo} type="video/mp4" />
-          <div 
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${hotelFallback})` }}
-          />
+          {/* The invalid div has been removed */}
         </video>
 
         <div className="absolute inset-0 bg-linear-to-br from-black/40 via-black/20 to-transparent z-20" />
@@ -651,7 +622,7 @@ const Home = () => {
             </div>      
           </div>
 
-          {/* ENHANCED EXTRA ORDINARY SERVICES SECTION - FIXED */}
+          {/* ENHANCED EXTRA ORDINARY SERVICES SECTION */}
           <div className="min-h-screen pt-32" id="extraordinary-services">
             <div className="text-center mb-20" id="services">
               <motion.div
@@ -689,7 +660,7 @@ const Home = () => {
               </motion.p>
             </div>
 
-            {/* FIXED: Only render services from displayedServices array */}
+            {/* Services */}
             <div className="space-y-20">
               {displayedServices.map((service, index) => (
                 <ServiceCard 

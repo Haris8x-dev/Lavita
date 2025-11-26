@@ -20,7 +20,7 @@ interface NavItem {
 }
 
 const Navbar: React.FC = () => {
-  // State for navbar visibility
+  // State for navbar visibility - FIXED: Added hasMounted state
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
@@ -28,11 +28,17 @@ const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [currentHash, setCurrentHash] = useState('');
   const [isScrolledToSection, setIsScrolledToSection] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false); // NEW: Track component mount
 
   // Use Next.js hooks to get current path and search params
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
+
+  // FIXED: Set hasMounted to true after component mounts
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   // Safe navigation function
   const goToHash = (hash: string) => {
@@ -204,7 +210,7 @@ const Navbar: React.FC = () => {
     if (currentHash === targetHash) return true;
 
     // Home link is active when no hash is present and we're at the top
-    if (href === '/' && !currentHash && typeof window !== 'undefined' && window.scrollY < 100) return true;
+    if (href === '/' && !currentHash && hasMounted && window.scrollY < 100) return true;
 
     return false;
   };
@@ -383,14 +389,19 @@ const Navbar: React.FC = () => {
 
   return (
     <>
+      {/* FIXED: Navbar visibility logic - only apply dynamic classes after mount */}
       <nav
         className={`
           fixed top-0 left-0 right-0 z-40
           transition-transform duration-300 ease-in-out
-          ${isVisible ? 'translate-y-0' : '-translate-y-full'}
+          ${
+            hasMounted && !isVisible 
+              ? '-translate-y-full' 
+              : 'translate-y-0'
+          }
         `}
       >
-        <div className="absolute inset-0 bg-black/30 backdrop-blur-md border-b border-white/20" />
+        <div className="absolute inset-0 bg-black/30 backdrop-blur-md border-b border-white/20"/>
 
         <div className="relative max-w-7xl mx-auto px-4">
           <div className="flex justify-between items-center py-4">
