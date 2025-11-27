@@ -13,7 +13,7 @@ const box3Img = '/images/box3.jpg'
 
 // Video from public folder
 const hotelVideo = '/videos/hotel-video.mp4'
-const hotelFallback = '/images/black.jpg'
+const hotelFallback = '/images/box3.jpg'
 
 // CountUp Component
 const CountUp = ({ end, duration = 2, suffix = "" }: { end: number; duration?: number; suffix?: string }) => {
@@ -158,27 +158,27 @@ const Home = () => {
   // Animation variants with proper TypeScript types
   const fadeUpVariants: Variants = {
     hidden: { opacity: 0, y: 40 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.7, ease: "easeOut" }
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      transition: { duration: 0.7, ease: "easeOut" } 
     }
   }
 
   const fadeInVariants: Variants = {
     hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { duration: 0.6, ease: "easeOut" }
+    visible: { 
+      opacity: 1, 
+      transition: { duration: 0.6, ease: "easeOut" } 
     }
   }
 
   const scaleVariants: Variants = {
     hidden: { opacity: 0, scale: 0.9 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: { duration: 0.7, ease: "easeOut" }
+    visible: { 
+      opacity: 1, 
+      scale: 1, 
+      transition: { duration: 0.7, ease: "easeOut" } 
     }
   }
 
@@ -195,17 +195,17 @@ const Home = () => {
   ), [showAllServices, extraordinaryServices])
 
   // Service Card Component
-  const ServiceCard = ({
-    service,
+  const ServiceCard = ({ 
+    service, 
     index,
     totalCount = 0
-  }: {
-    service: typeof extraordinaryServices[0];
+  }: { 
+    service: typeof extraordinaryServices[0]; 
     index: number;
     totalCount?: number;
   }) => {
     const isEven = index % 2 === 0
-
+    
     return (
       <motion.div
         key={`${service.id}-${index}`}
@@ -217,9 +217,10 @@ const Home = () => {
       >
         {/* Background Glow Effect */}
         <div className="absolute inset-0 bg-linear-to-r from-emerald-500/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-
-        <div className={`relative flex flex-col lg:flex-row items-center gap-12 ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'
-          }`}>
+        
+        <div className={`relative flex flex-col lg:flex-row items-center gap-12 ${
+          isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'
+        }`}>
           {/* Image Section */}
           <motion.div
             whileHover={{ scale: 1.02 }}
@@ -239,7 +240,7 @@ const Home = () => {
               <div className="absolute inset-0 border border-white/10 rounded-2xl pointer-events-none" />
               {/* Gradient Overlay */}
               <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent" />
-
+              
               {/* Highlight Badge */}
               <motion.div
                 initial="hidden"
@@ -309,12 +310,12 @@ const Home = () => {
   }
 
   // Card component
-  const ExperienceCard = ({
-    experience,
-    position
-  }: {
-    experience: typeof experiences[0];
-    position: 'left' | 'center' | 'right'
+  const ExperienceCard = ({ 
+    experience, 
+    position 
+  }: { 
+    experience: typeof experiences[0]; 
+    position: 'left' | 'center' | 'right' 
   }) => (
     <motion.div
       variants={carouselCardVariants}
@@ -376,7 +377,7 @@ const Home = () => {
   const getCardIndices = () => {
     const total = experiences.length
     const current = carouselState.activeIndex
-
+    
     return {
       leftIndex: (current - 1 + total) % total,
       centerIndex: current,
@@ -389,7 +390,7 @@ const Home = () => {
   return (
     <div className="relative">
       {/* SECTION 1: PROFESSIONAL HERO WITH VIDEO BACKGROUND */}
-      <section className="fixed top-0 left-0 w-full h-screen overflow-hidden">
+      <section className="relative w-full h-screen overflow-hidden">
         <video
           autoPlay
           loop
@@ -403,7 +404,7 @@ const Home = () => {
         </video>
 
         <div className="absolute inset-0 bg-linear-to-br from-black/40 via-black/20 to-transparent z-20" />
-
+        
         <div className="absolute inset-0 flex items-center z-30">
           <div className="ml-8 lg:ml-16 xl:ml-24 max-w-2xl">
             <motion.div
@@ -476,14 +477,14 @@ const Home = () => {
       </section>
 
       {/* SECTION 2: MAIN CONTENT */}
-      <section className="relative w-full bg-black overflow-hidden mt-[100vh] border-tr-rounded-2xl rounded-tr-4xl rounded-tl-4xl">
+      <section className="relative w-full bg-black overflow-hidden">
         <div className="absolute inset-0 bg-black" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,var(--tw-gradient-stops))] from-emerald-500/10 via-transparent to-transparent" />
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-400/5 rounded-full blur-3xl" />
         <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-green-300/5 rounded-full blur-3xl" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
-
+          
           {/* CAROUSEL SECTION */}
           <div className="min-h-screen flex flex-col justify-center py-20">
             <div className="text-center mb-16 lg:mb-24">
@@ -545,7 +546,7 @@ const Home = () => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
-                <ChevronRight />
+               <ChevronRight />
               </motion.button>
 
               <div className="relative w-full max-w-4xl mx-auto flex items-center justify-center h-full px-4">
@@ -571,7 +572,7 @@ const Home = () => {
                   transition={{ scale: { duration: 0.2, ease: "easeOut" } }}
                 />
               ))}
-            </div>
+            </div>      
           </div>
 
           {/* ENHANCED EXTRA ORDINARY SERVICES SECTION */}
@@ -617,9 +618,9 @@ const Home = () => {
             {/* Services */}
             <div className="space-y-20">
               {displayedServices.map((service, index) => (
-                <ServiceCard
+                <ServiceCard 
                   key={`${service.id}-${index}`}
-                  service={service}
+                  service={service} 
                   index={index}
                   totalCount={displayedServices.length}
                 />
@@ -644,10 +645,10 @@ const Home = () => {
                 >
                   <span className="flex items-center gap-3">
                     {showAllServices ? 'Show Less Services' : 'View More Services'}
-                    <motion.svg
+                    <motion.svg 
                       className="w-5 h-5 transform transition-transform duration-300"
-                      fill="none"
-                      viewBox="0 0 24 24"
+                      fill="none" 
+                      viewBox="0 0 24 24" 
                       stroke="currentColor"
                       animate={{ rotate: showAllServices ? 180 : 0 }}
                       transition={{ duration: 0.3 }}
@@ -711,7 +712,7 @@ const Home = () => {
                   transition={{ duration: 0.7, delay: 0.4, ease: "easeOut" }}
                   className="text-lg text-slate-300 leading-relaxed"
                 >
-                  Nestled in the heart of Swat Valley, Lavita Malam Jabba stands as a testament to luxury and natural beauty.
+                  Nestled in the heart of Swat Valley, Lavita Malam Jabba stands as a testament to luxury and natural beauty. 
                   Our resort offers an unparalleled experience where modern comfort meets the majestic Himalayan landscape.
                 </motion.p>
 
@@ -723,7 +724,7 @@ const Home = () => {
                   transition={{ duration: 0.7, delay: 0.5, ease: "easeOut" }}
                   className="text-lg text-slate-300 leading-relaxed"
                 >
-                  With panoramic views of the surrounding mountains, world-class amenities, and exceptional hospitality,
+                  With panoramic views of the surrounding mountains, world-class amenities, and exceptional hospitality, 
                   we provide a sanctuary for those seeking both adventure and relaxation in one of Pakistan&apos;s most breathtaking locations.
                 </motion.p>
 
@@ -790,7 +791,7 @@ const Home = () => {
                   />
                   <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent" />
                 </div>
-
+                
                 <motion.div
                   initial="hidden"
                   whileInView="visible"
@@ -807,465 +808,6 @@ const Home = () => {
               </motion.div>
             </div>
           </div>
-
-          {/* TESTIMONIALS SECTION */}
-          <div className="min-h-screen pt-32" id="testimonials">
-            <div className="text-center mb-20">
-              <motion.div
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fadeUpVariants}
-                className="inline-flex items-center gap-3 mb-6"
-              >
-                <div className="w-12 h-0.5 bg-linear-to-r from-transparent to-emerald-400" />
-                <span className="text-emerald-400 font-light tracking-widest text-sm uppercase">Testimonials</span>
-                <div className="w-12 h-0.5 bg-linear-to-l from-transparent to-emerald-400" />
-              </motion.div>
-
-              <motion.h2
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fadeUpVariants}
-                transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
-                className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6"
-              >
-                <span className="bg-linear-to-r from-green-300 to-emerald-400 bg-clip-text text-transparent">
-                  Trusted by Leaders
-                </span>
-              </motion.h2>
-
-              <motion.p
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fadeUpVariants}
-                transition={{ duration: 0.7, delay: 0.3, ease: "easeOut" }}
-                className="text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed mb-4"
-              >
-                from various industries
-              </motion.p>
-
-              <motion.p
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fadeUpVariants}
-                transition={{ duration: 0.7, delay: 0.4, ease: "easeOut" }}
-                className="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed mb-12"
-              >
-                Learn why professionals trust our luxury resort to complete their perfect mountain getaway.
-              </motion.p>
-
-              {/* Stats with Count Animation */}
-              <motion.div
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fadeUpVariants}
-                transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
-                className="grid grid-cols-3 gap-8 max-w-2xl mx-auto"
-              >
-                {[
-                  { number: 500, suffix: "+", label: "Happy Guests" },
-                  { number: 98, suffix: "%", label: "Satisfaction" },
-                  { number: 50, suffix: "+", label: "5-Star Reviews" }
-                ].map((stat, index) => (
-                  <motion.div
-                    key={index}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                    variants={scaleVariants}
-                    transition={{ duration: 0.6, delay: 0.6 + index * 0.1 }}
-                    className="text-center"
-                  >
-                    <div className="text-4xl font-bold text-emerald-400 mb-2">
-                      <CountUp end={stat.number} suffix={stat.suffix} duration={2.5} />
-                    </div>
-                    <div className="text-slate-400 text-sm uppercase tracking-wider">{stat.label}</div>
-                  </motion.div>
-                ))}
-              </motion.div>
-            </div>
-
-            {/* Enhanced Testimonials Grid */}
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeUpVariants}
-              transition={{ duration: 0.8, delay: 0.7, ease: "easeOut" }}
-              className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto"
-            >
-              {[
-                {
-                  id: 1,
-                  name: "Sarah Johnson",
-                  position: "CEO, Tech Innovations",
-                  comment: "The most breathtaking views combined with exceptional service. Our corporate retreat was a huge success thanks to Lavita's attention to detail.",
-                  rating: 5,
-                  image: box1Img,
-                  industry: "Technology"
-                },
-                {
-                  id: 2,
-                  name: "Michael Chen",
-                  position: "Marketing Director",
-                  comment: "From the luxurious accommodations to the personalized adventure planning, every moment was perfect. Truly extraordinary hospitality.",
-                  rating: 5,
-                  image: box2Img,
-                  industry: "Marketing"
-                },
-                {
-                  id: 3,
-                  name: "Emma Rodriguez",
-                  position: "Family Travel Expert",
-                  comment: "Our family had the most memorable vacation. The kids loved the activities while we enjoyed the spa and mountain views. Pure magic!",
-                  rating: 5,
-                  image: box3Img,
-                  industry: "Hospitality"
-                }
-              ].map((testimonial, index) => (
-                <motion.div
-                  key={testimonial.id}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  variants={fadeUpVariants}
-                  transition={{ duration: 0.6, delay: 0.8 + index * 0.2 }}
-                  className="group"
-                >
-                  <div className="bg-linear-to-br from-slate-800/40 to-slate-900/60 rounded-2xl p-8 border border-emerald-400/10 hover:border-emerald-400/30 transition-all duration-500 h-full flex flex-col">
-                    {/* Rating Stars */}
-                    <div className="flex items-center gap-1 mb-6">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <motion.svg
-                          key={i}
-                          className="w-5 h-5 text-emerald-400"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                          initial={{ scale: 0, opacity: 0 }}
-                          whileInView={{ scale: 1, opacity: 1 }}
-                          transition={{ duration: 0.3, delay: 0.9 + index * 0.2 + i * 0.1 }}
-                        >
-                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </motion.svg>
-                      ))}
-                    </div>
-
-                    {/* Comment */}
-                    <div className="flex-1 mb-6">
-                      <p className="text-slate-300 leading-relaxed text-lg font-light group-hover:text-slate-200 transition-colors duration-300">
-                        "{testimonial.comment}"
-                      </p>
-                    </div>
-
-                    {/* Author Info */}
-                    <div className="flex items-center gap-4 pt-6 border-t border-slate-700/50">
-                      <div className="relative group/avatar">
-                        <motion.div
-                          whileHover={{ scale: 1.05 }}
-                          transition={{ duration: 0.3 }}
-                          className="w-14 h-14 rounded-full overflow-hidden border-2 border-emerald-400/20 group-hover/avatar:border-emerald-400/40 transition-all duration-300"
-                        >
-                          <Image
-                            src={testimonial.image}
-                            alt={testimonial.name}
-                            width={56}
-                            height={56}
-                            className="w-full h-full object-cover"
-                          />
-                        </motion.div>
-
-                        {/* Enhanced Hover Popup */}
-                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-4 opacity-0 group-hover/avatar:opacity-100 pointer-events-none transition-all duration-300 z-50 scale-95 group-hover/avatar:scale-100">
-                          <div className="bg-slate-800/95 backdrop-blur-md border border-emerald-400/30 rounded-xl p-4 shadow-2xl shadow-black/50 min-w-[200px]">
-                            <div className="text-center space-y-2">
-                              <p className="text-white font-semibold text-sm">{testimonial.name}</p>
-                              <p className="text-emerald-400 text-xs">{testimonial.position}</p>
-                              <div className="flex justify-center gap-1">
-                                {[...Array(testimonial.rating)].map((_, i) => (
-                                  <svg key={i} className="w-3 h-3 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                  </svg>
-                                ))}
-                              </div>
-                              <p className="text-slate-300 text-xs italic">"{testimonial.comment.split('.').slice(0, 2).join('.')}."</p>
-                            </div>
-                            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-slate-800 border-r border-b border-emerald-400/30" />
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex-1">
-                        <p className="text-white font-semibold">{testimonial.name}</p>
-                        <p className="text-slate-400 text-sm">{testimonial.position}</p>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="text-xs text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-full border border-emerald-400/20">
-                            {testimonial.industry}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-
-            {/* Additional Trust Indicators */}
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeUpVariants}
-              transition={{ duration: 0.8, delay: 1.2, ease: "easeOut" }}
-              className="text-center mt-20"
-            >
-              <div className="inline-flex flex-wrap items-center justify-center gap-8 text-slate-400 text-sm">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-                  <span>Verified Reviews</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-                  <span>Industry Leaders</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-                  <span>Real Experiences</span>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* CONTACT SECTION */}
-          <div className="min-h-screen pt-32 flex items-center" id="contact">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-              <div className="text-center mb-16">
-                <motion.div
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  variants={fadeUpVariants}
-                  className="inline-flex items-center gap-3 mb-6"
-                >
-                  <div className="w-12 h-0.5 bg-linear-to-r from-transparent to-emerald-400" />
-                  <span className="text-emerald-400 font-light tracking-widest text-sm uppercase">Get In Touch</span>
-                  <div className="w-12 h-0.5 bg-linear-to-l from-transparent to-emerald-400" />
-                </motion.div>
-
-                <motion.h2
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  variants={fadeUpVariants}
-                  transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
-                  className="text-5xl md:text-6xl lg:text-6xl font-bold text-white mb-6"
-                >
-                  <span className="bg-linear-to-r from-green-300 to-emerald-400 bg-clip-text text-transparent">
-                    Contact Us
-                  </span>
-                </motion.h2>
-
-                <motion.p
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  variants={fadeUpVariants}
-                  transition={{ duration: 0.7, delay: 0.3, ease: "easeOut" }}
-                  className="text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed"
-                >
-                  Ready to experience luxury in the heart of Malam Jabba? Let's start planning your unforgettable mountain getaway.
-                </motion.p>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
-                {/* Contact Information - Compact */}
-                <motion.div
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  variants={fadeUpVariants}
-                  transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-                  className="space-y-6"
-                >
-                  <div className="bg-linear-to-br from-slate-800/40 to-slate-900/60 rounded-2xl p-6 border border-emerald-400/20">
-                    <h3 className="text-2xl font-bold text-white mb-6">Let's Connect</h3>
-
-                    {/* Contact Details Grid */}
-                    <div className="grid grid-cols-1 gap-4">
-                      {/* Phone & Email Row */}
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="group cursor-pointer">
-                          <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-800/30 border border-slate-700/50 group-hover:border-emerald-400/30 transition-all duration-300">
-                            <div className="w-10 h-10 bg-emerald-400/10 rounded-lg flex items-center justify-center border border-emerald-400/20">
-                              <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                              </svg>
-                            </div>
-                            <div>
-                              <p className="text-white font-semibold text-sm group-hover:text-emerald-300 transition-colors duration-300">
-                                +92 123 456 7890
-                              </p>
-                              <p className="text-slate-400 text-xs">24/7 Available</p>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="group cursor-pointer">
-                          <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-800/30 border border-slate-700/50 group-hover:border-emerald-400/30 transition-all duration-300">
-                            <div className="w-10 h-10 bg-emerald-400/10 rounded-lg flex items-center justify-center border border-emerald-400/20">
-                              <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                              </svg>
-                            </div>
-                            <div>
-                              <p className="text-white font-semibold text-sm group-hover:text-emerald-300 transition-colors duration-300">
-                                info@lavita.com
-                              </p>
-                              <p className="text-slate-400 text-xs">Quick Response</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Location */}
-                      <div className="group">
-                        <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-800/30 border border-slate-700/50">
-                          <div className="w-10 h-10 bg-emerald-400/10 rounded-lg flex items-center justify-center border border-emerald-400/20">
-                            <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                          </div>
-                          <div>
-                            <p className="text-white font-semibold text-sm">Malam Jabba Road</p>
-                            <p className="text-slate-400 text-xs">Swat Valley, Pakistan</p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Hours */}
-                      <div className="group">
-                        <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-800/30 border border-slate-700/50">
-                          <div className="w-10 h-10 bg-emerald-400/10 rounded-lg flex items-center justify-center border border-emerald-400/20">
-                            <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                          </div>
-                          <div>
-                            <p className="text-white font-semibold text-sm">24/7 Operations</p>
-                            <p className="text-slate-400 text-xs">Check-in: 2PM | Check-out: 12PM</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Social Links */}
-                    <div className="pt-6 border-t border-slate-700/50 mt-6">
-                      <p className="text-slate-400 text-sm mb-4 text-center">Follow Our Journey</p>
-                      <div className="flex justify-center gap-3">
-                        {[
-                          { icon: "M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z", name: "Twitter" },
-                          { icon: "M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z", name: "Facebook" },
-                          { icon: "M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.042-3.441.219-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.001 12.017 24.001c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641.001 12.017.001z", name: "Instagram" }
-                        ].map((social, index) => (
-                          <motion.a
-                            key={social.name}
-                            href="#"
-                            className="w-10 h-10 bg-slate-800/50 rounded-lg flex items-center justify-center border border-slate-700/50 hover:bg-emerald-400/10 hover:border-emerald-400/30 transition-all duration-300 group"
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.95 }}
-                          >
-                            <svg className="w-4 h-4 text-slate-400 group-hover:text-emerald-400 transition-colors duration-300" fill="currentColor" viewBox="0 0 24 24">
-                              <path d={social.icon} />
-                            </svg>
-                          </motion.a>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* Contact Form - Compact */}
-                <motion.div
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  variants={fadeUpVariants}
-                  transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
-                  className="bg-linear-to-br from-slate-800/30 to-slate-900/50 rounded-2xl p-6 border border-emerald-400/20"
-                >
-                  <h3 className="text-2xl font-bold text-white mb-6">Send us a Message</h3>
-
-                  <form className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <input
-                          type="text"
-                          placeholder="First Name *"
-                          required
-                          className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-emerald-400/50 focus:bg-slate-800/70 transition-all duration-300 text-sm"
-                        />
-                      </div>
-                      <div>
-                        <input
-                          type="text"
-                          placeholder="Last Name *"
-                          required
-                          className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-emerald-400/50 focus:bg-slate-800/70 transition-all duration-300 text-sm"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <input
-                        type="email"
-                        placeholder="Email Address *"
-                        required
-                        className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-emerald-400/50 focus:bg-slate-800/70 transition-all duration-300 text-sm"
-                      />
-                    </div>
-
-                    <div>
-                      <select
-                        required
-                        className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-xl text-white focus:outline-none focus:border-emerald-400/50 focus:bg-slate-800/70 transition-all duration-300 text-sm"
-                      >
-                        <option value="">Select Inquiry Type</option>
-                        <option value="booking">Room Booking</option>
-                        <option value="corporate">Corporate Retreat</option>
-                        <option value="wedding">Wedding & Events</option>
-                        <option value="adventure">Adventure Activities</option>
-                        <option value="general">General Inquiry</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <textarea
-                        placeholder="Your Message *"
-                        required
-                        rows={3}
-                        className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-emerald-400/50 focus:bg-slate-800/70 transition-all duration-300 text-sm resize-none"
-                      />
-                    </div>
-
-                    <motion.button
-                      type="submit"
-                      className="w-full py-4 bg-linear-to-r from-emerald-500 to-green-500 text-white font-bold text-lg rounded-xl hover:shadow-2xl hover:shadow-emerald-500/30 transition-all duration-500 border border-emerald-400/30"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      Send Message
-                    </motion.button>
-                  </form>
-                </motion.div>
-              </div>
-            </div>
-          </div>
-
         </div>
       </section>
     </div>

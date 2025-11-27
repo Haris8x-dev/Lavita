@@ -210,7 +210,7 @@ const Navbar: React.FC = () => {
     if (currentHash === targetHash) return true;
 
     // Home link is active when no hash is present and we're at the top
-    if (href === '/' && !currentHash && hasMounted && window.scrollY < 100) return true;
+    if (href === '/' && !currentHash && !isScrolledToSection) return true;
 
     return false;
   };

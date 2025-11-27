@@ -227,7 +227,6 @@ const KidsActivityZone: React.FC = () => {
                 <source src={kidsVideo} type="video/mp4" />
                 <Image
                   src={kidsFallback}
-                  loading='lazy'
                   alt="Kids Activity Zone Video"
                   fill
                   className="object-cover"
@@ -362,7 +361,6 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, index }) => {
             <Image
               src={activity.image}
               alt={activity.title}
-              loading='lazy'
               fill
               className="object-cover"
               priority={index < 2}
